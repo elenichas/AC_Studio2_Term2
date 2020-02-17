@@ -9,6 +9,7 @@ using System.Linq;
 public class House 
 { 
        readonly string Rule;
+
        public List<List<Room>> Rooms;
      
     public House(string Rule)
