@@ -17,7 +17,7 @@ public abstract class Genome : IComparable
 
 		abstract public void Initialize();
 		abstract public void Mutate(string Houseprog );
-		abstract public Genome Crossover(Genome g);
+		//abstract public Genome Crossover(Genome g);
 		abstract public char GenerateGeneValue(string Houseprog );
 		abstract public void SetCrossoverPoint(int crossoverPoint);
 		abstract public float CalculateFitness();

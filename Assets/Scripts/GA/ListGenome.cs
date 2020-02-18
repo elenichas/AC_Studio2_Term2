@@ -20,7 +20,9 @@ using UnityEngine;
        public string HouseProg;
        public List<Mesh> FinalMeshes;
 
-        public override int CompareTo(object a)
+    List<char> letters;
+
+    public override int CompareTo(object a)
 		{
 			ListGenome Gene1 = this;
 			ListGenome Gene2 = (ListGenome)a;
@@ -45,9 +47,9 @@ using UnityEngine;
           Length = HouseProgramLength;
            this.HouseProg = HouseProg;
            this.FinalMeshes = FinalMeshes;
+           letters = HouseProg.ToList();
 
-             
-            for (int i = 0; i < Length; i++)
+        for (int i = 0; i < Length; i++)
 			{
 			   char gene = GenerateGeneValue(HouseProg);
               
@@ -86,17 +88,17 @@ using UnityEngine;
 		public override char GenerateGeneValue(string HouseProg)
 		{
           
-         List<char> letters = HouseProg.ToList();
+         
          char RandRoom = letters[UnityEngine.Random.Range(0, letters.Count)];
-         letters.RemoveAt(UnityEngine.Random.Range(0, letters.Count));
+         letters.Remove(RandRoom);
            
            return RandRoom;
 		}
 
 		public override void Mutate(string HouseProg)
 		{
-			MutationIndex = UnityEngine.Random.Range(0,HouseProg.Length);
-            TheArray.Reverse(0,MutationIndex);
+			MutationIndex = UnityEngine.Random.Range(1,HouseProg.Length);
+            TheArray.Reverse(MutationIndex-1,MutationIndex);
 			//char val = GenerateGeneValue(HouseProg );
 			//TheArray[MutationIndex] = val;
 
@@ -210,40 +212,5 @@ using UnityEngine;
 		}
 
 
-		public override Genome Crossover(Genome g)
-		{
-			ListGenome aGene1 = new ListGenome();
-			ListGenome aGene2 = new ListGenome();
-			g.CopyGeneInfo(aGene1);
-			g.CopyGeneInfo(aGene2);
-
-
-			ListGenome CrossingGene = (ListGenome)g;
-			for (int i = 0; i < CrossoverPoint; i++)
-			{
-				aGene1.TheArray.Add(CrossingGene.TheArray[i]);
-				aGene2.TheArray.Add(TheArray[i]);
-			}
-
-			for (int j = CrossoverPoint; j < Length; j++)
-			{
-				aGene1.TheArray.Add(TheArray[j]);
-				aGene2.TheArray.Add(CrossingGene.TheArray[j]);
-			}
-
-			// 50/50 chance of returning gene1 or gene2
-			ListGenome aGene = null;
-			if (TheSeed.Next(2) == 1)			
-			{
-				aGene = aGene1;
-			}
-			else
-			{
-				aGene = aGene2;
-			}
-
-			return aGene;
-		}
-
-	}
+    }
  

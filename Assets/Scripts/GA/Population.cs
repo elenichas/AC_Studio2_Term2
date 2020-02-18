@@ -94,7 +94,7 @@ public class Population
 			// do the crossover of the genes and add them to the population
            // DoCrossover(GenomeReproducers);
 
-			Genomes = (ArrayList)GenomeResults.Clone();
+			//Genomes = (ArrayList)GenomeResults.Clone();
 
 			// mutate a few genes in the new population
 			for  (int i = 0; i < Genomes.Count; i++)
@@ -109,7 +109,7 @@ public class Population
 			}
 
 
-               //Genomes.Sort();
+               
 
 			// kill all the genes above the population limit
 			if (Genomes.Count > kPopulationLimit)
@@ -127,97 +127,21 @@ public class Population
 			}
 		}
 
-		public void DoCrossover(ArrayList genes)
+	 
+
+		public  List <string> WriteNextGeneration()
 		{
-			ArrayList GeneMoms = new ArrayList();
-			ArrayList GeneDads = new ArrayList();
 
-			for (int i = 0; i < genes.Count; i++)
-			{
-				// randomly pick the moms and dad's
-				if (ListGenome.TheSeed.Next(100) % 2 > 0)
-				{
-					GeneMoms.Add(genes[i]);
-				}
-				else
-				{
-					GeneDads.Add(genes[i]);
-				}
-			}
-
-			//  now make them equal
-			if (GeneMoms.Count > GeneDads.Count)
-			{
-				while (GeneMoms.Count > GeneDads.Count)
-				{
-					GeneDads.Add(GeneMoms[GeneMoms.Count - 1]);
-					GeneMoms.RemoveAt(GeneMoms.Count - 1);
-				}
-
-				if (GeneDads.Count > GeneMoms.Count)
-				{
-					GeneDads.RemoveAt(GeneDads.Count - 1); // make sure they are equal
-				}
-
-			}
-			else
-			{
-				while (GeneDads.Count > GeneMoms.Count)
-				{
-					GeneMoms.Add(GeneDads[GeneDads.Count - 1]);
-					GeneDads.RemoveAt(GeneDads.Count - 1);
-				}
-
-				if (GeneMoms.Count > GeneDads.Count)
-				{
-					GeneMoms.RemoveAt(GeneMoms.Count - 1); // make sure they are equal
-				}
-			}
-
-			// now cross them over and add them according to fitness
-			for (int i = 0; i < GeneDads.Count; i ++)
-			{
-				// pick best 2 from parent and children
-				ListGenome babyGene1 = (ListGenome)((ListGenome)GeneDads[i]).Crossover((ListGenome)GeneMoms[i]);
-			    ListGenome babyGene2 = (ListGenome)((ListGenome)GeneMoms[i]).Crossover((ListGenome)GeneDads[i]);
-			
-				GenomeFamily.Clear();
-				GenomeFamily.Add(GeneDads[i]);
-				GenomeFamily.Add(GeneMoms[i]);
-				GenomeFamily.Add(babyGene1);
-				GenomeFamily.Add(babyGene2);
-				CalculateFitnessForAll(GenomeFamily);
-				GenomeFamily.Sort();
-
-				if (Best2 == true)
-				{
-					// if Best2 is true, add top fitness genes
-					GenomeResults.Add(GenomeFamily[0]);					
-					GenomeResults.Add(GenomeFamily[1]);					
-
-				}
-				else
-				{
-					GenomeResults.Add(babyGene1);
-					GenomeResults.Add(babyGene2);
-				}
-			}
-
-		}
-
-		public void WriteNextGeneration()
-		{
-         // just write the top 20
-         // Debug.Log("Generation {0}\n",$"{Generation}");
-
-           Debug.Log(Generation);
+          List<string> str = new List<string>();
+          
 			for  (int i = 0; i <  CurrentPopulation ; i++)
 			{
-                            
-			  Debug.Log (((Genome)Genomes[i]).ToString());
-              
+                 Debug.Log(((Genome)Genomes[i]).ToString())  ;         
+			  str.Add(((Genome)Genomes[i]).ToString());
+            
             }
-         
+        
+          return str;
             			 
 		}
 	}

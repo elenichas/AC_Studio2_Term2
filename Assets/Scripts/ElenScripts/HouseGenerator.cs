@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Threading;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TMPro;
 
 public class HouseGenerator : MonoBehaviour
 {
@@ -19,13 +20,20 @@ public class HouseGenerator : MonoBehaviour
     CancellationTokenSource _cancel = new CancellationTokenSource();
     public Rect RuleRect = new Rect(0, 0, 5, 2);
     public Rect NumRect = new Rect(0,0, 5, 2);
-     
+    public Rect GaRect = new Rect(0, 0, 5, 2);
+
+    //GUI Inputs 
+    // public TextMeshProUGUI ErrorsZone;
+    // public TextMeshProUGUI GaPreview;
+
 
     //Start with Rule to avoid null
     string Rule = "A";
     string HouseProg = "kb";
     
     House myHouse;
+    string genomestring = "the best genome";
+
 
     // Start is called before the first frame update
     void Start()
@@ -33,13 +41,16 @@ public class HouseGenerator : MonoBehaviour
         myHouse = new House(Rule);
         myHouse.CreateRooms();
         myHouse.GetFinalRooms();
-        Debug.Log(myHouse.GetFinalRooms().Count);
+        
         foreach (Room item in myHouse.GetFinalRooms())
         {
             Mesh rect2 = item.Rec;
             FinalMeshes.Add(rect2);
-            Debug.Log(FinalMeshes.Count);
+             
         }
+        
+    
+
     }
     // Update is called once per frame
     void Update()
@@ -58,34 +69,21 @@ public class HouseGenerator : MonoBehaviour
         int s = 25;
         GUI.skin = _skin;
         
-
+        //when you press Make House it gets the number of rooms you entered
+        //and tries to find a random rule that can give that numbers of rooms
         HouseProg = GUI.TextField(new Rect(s, s * i++, 200, 20), HouseProg);
-        if (GUI.Button(new Rect(s, (s * i++)+5, 200, 20), "Make House baby"))
+        if (GUI.Button(new Rect(s, (s * i++)+5, 200, 20), "Make House"))
         {
-            //check for accurate Room labels
-            if (isValid(HouseProg))
-            {
-                //Find a rule that can generate that number of rooms
-                while (HouseProg.Length != myHouse.GetRoomNum())
-                {
-                    //try a shorter rule length for less rooms programms(it crushes otherwise)
-                    if (HouseProg.Length > 5)
-                        Run(4);
-                    else if (HouseProg.Length <= 3)
-                        Run(2);
-                    else
-                        Run(3);
-                }
-            }
-            else
-                Debug.Log("Some of the Rooms are not valid");
+            MakeHouse();
                          
         }
       
+        //the preview rectangles for the number of rooms and the current Rule
         NumRect = GUI.Window(1, NumRect, DoMyWindow, $"{myHouse.GetRoomNum()}");
         RuleRect = GUI.Window(0, RuleRect, DoMyWindow, Rule);
+
        
-        //Optimization  
+        //When you press that button you run the labels Optimization  
         if (GUI.Button(new Rect(s, (s * i++) + 5, 200, 20), "Generate Labels"))
         {
             //Run the GA
@@ -96,11 +94,43 @@ public class HouseGenerator : MonoBehaviour
              {
                TestPopulation.NextGeneration();
                
-               TestPopulation.WriteNextGeneration();
-                   
-             }         
+              
+                TestPopulation.WriteNextGeneration();
+                
+             }
+            
         }
-       
+
+        GaRect = GUI.Window(3, GaRect, DoMyWindow, genomestring);
+    }
+
+    public void MakeHouse()
+    {
+
+        
+        //check for accurate Room labels
+        if (isValid(HouseProg))
+        {
+            //Find a rule that can generate that number of rooms
+            int counter = 0;
+            while (HouseProg.Length != myHouse.GetRoomNum() && counter < 100)
+            {
+                counter++;
+                //try a shorter rule length for less rooms programms(it crushes otherwise)
+                if (HouseProg.Length > 5)
+                    Run(4);
+                else if (HouseProg.Length <= 3)
+                    Run(2);
+                else
+                    Run(3);
+            }
+        }
+        else
+        {
+            
+            Debug.Log("Some of the Rooms are not valid");
+        }
+
     }
     void DoMyWindow(int windowID)
     {
@@ -138,7 +168,7 @@ public class HouseGenerator : MonoBehaviour
     //check for valid chars in user input
     private static bool isValid(string str)
     {
-        return Regex.IsMatch(str, "^[ktblwso]+$");
+        return Regex.IsMatch(str, @"^[ktblwso]+$");
     }
 
 }
