@@ -22,6 +22,8 @@ using UnityEngine;
 
     List<char> letters;
 
+    public Dictionary<string, float> GenomeFitnessPairs;
+
     public override int CompareTo(object a)
 		{
 			ListGenome Gene1 = this;
@@ -30,10 +32,7 @@ using UnityEngine;
 		}
 
 
-		public override void SetCrossoverPoint(int crossoverPoint)
-		{
-			CrossoverPoint = 	crossoverPoint;
-		}
+		 
 
 		public ListGenome()
 		{
@@ -41,12 +40,13 @@ using UnityEngine;
 		}
 
 
-		public ListGenome(int HouseProgramLength,string HouseProg,List<Mesh>FinalMeshes)
+		public ListGenome(int HouseProgramLength,string HouseProg,List<Mesh>FinalMeshes, Dictionary<string,float> GenomeFitnessPairs)
 		{
               
           Length = HouseProgramLength;
            this.HouseProg = HouseProg;
            this.FinalMeshes = FinalMeshes;
+          this.GenomeFitnessPairs = GenomeFitnessPairs;
            letters = HouseProg.ToList();
 
         for (int i = 0; i < Length; i++)
@@ -65,7 +65,7 @@ using UnityEngine;
 
 		public override bool CanDie(float fitness)
 		{
-			if (CurrentFitness >= (int)(fitness * 100.0f))
+			if (CurrentFitness >= (int)(fitness))
 			{
 				return true;
 			}
@@ -76,7 +76,7 @@ using UnityEngine;
 
 		public override bool CanReproduce(float fitness)
 		{
-			if (ListGenome.TheSeed.Next(100) <= (int)(fitness * 100.0f))
+			if (CurrentFitness <= (int)(fitness))
 			{
 				return true;
 			}
@@ -106,7 +106,7 @@ using UnityEngine;
 
        private float MeshArea(Mesh mesh)
        {
-        float Area = mesh.bounds.size.x * mesh.bounds.size.y;
+        float Area = mesh.bounds.size.x * mesh.bounds.size.z;
 
         return Area;
 
@@ -190,17 +190,19 @@ using UnityEngine;
 			return CurrentFitness;
 		}
 
-		public override string ToString()
+		public override  void ToDictionary()
 		{
 			string strResult = "";
 			for (int i = 0; i < Length; i++)
 			{
-			  strResult = strResult + (TheArray[i]).ToString() + " ";
+			  strResult = strResult + (TheArray[i]).ToString();
 			}
 
-			strResult += "-->" + CurrentFitness.ToString();
-
-			return strResult;
+        if(!GenomeFitnessPairs.ContainsKey(strResult))
+            GenomeFitnessPairs.Add(strResult, CurrentFitness);
+         
+       
+       		 
 		}
 
 		public override void CopyGeneInfo(Genome dest)

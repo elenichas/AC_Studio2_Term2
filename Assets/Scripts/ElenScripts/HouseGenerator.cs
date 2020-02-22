@@ -12,6 +12,7 @@ public class HouseGenerator : MonoBehaviour
     //tHE final meshes to be visualized
     List<Mesh> FinalMeshes = new List<Mesh>();
 
+
     // Set the materials in the inspector
     public Material[] myMaterials = new Material[20];
 
@@ -32,8 +33,10 @@ public class HouseGenerator : MonoBehaviour
     string HouseProg = "kb";
     
     House myHouse;
-    string genomestring = "the best genome";
+     
 
+    //the dictionary that will store the Genome versions and their fitness
+    public Dictionary<string, float> GenomeFitnessPairs = new Dictionary<string, float>();
 
     // Start is called before the first frame update
     void Start()
@@ -45,12 +48,8 @@ public class HouseGenerator : MonoBehaviour
         foreach (Room item in myHouse.GetFinalRooms())
         {
             Mesh rect2 = item.Rec;
-            FinalMeshes.Add(rect2);
-             
-        }
-        
-    
-
+            FinalMeshes.Add(rect2);           
+        }    
     }
     // Update is called once per frame
     void Update()
@@ -82,32 +81,28 @@ public class HouseGenerator : MonoBehaviour
         NumRect = GUI.Window(1, NumRect, DoMyWindow, $"{myHouse.GetRoomNum()}");
         RuleRect = GUI.Window(0, RuleRect, DoMyWindow, Rule);
 
-       
+
+        
         //When you press that button you run the labels Optimization  
         if (GUI.Button(new Rect(s, (s * i++) + 5, 200, 20), "Generate Labels"))
         {
             //Run the GA
-             Population TestPopulation = new Population(HouseProg.Length,HouseProg,FinalMeshes);
-             TestPopulation.WriteNextGeneration();
-
-             for (int j = 0; j <1000; j++)
-             {
-               TestPopulation.NextGeneration();
-               
-              
-                TestPopulation.WriteNextGeneration();
-                
-             }
-            
+             Population TestPopulation = new Population(HouseProg.Length,HouseProg,FinalMeshes, GenomeFitnessPairs);
+             TestPopulation.WriteNextGeneration( );         
         }
 
-        GaRect = GUI.Window(3, GaRect, DoMyWindow, genomestring);
+        string eleos = "";
+        for (int d = 0; d < GenomeFitnessPairs.Count; d++)
+        {
+            eleos += ", " + GenomeFitnessPairs.ElementAt(d);
+            GaRect = GUI.Window(3, GaRect, DoMyWindow, $"{eleos}");
+        }
+        Debug.Log(eleos);
     }
 
-    public void MakeHouse()
-    {
-
         
+    public void MakeHouse()
+    {      
         //check for accurate Room labels
         if (isValid(HouseProg))
         {

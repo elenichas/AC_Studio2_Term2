@@ -12,15 +12,14 @@ using UnityEngine;
 public class Population
 	{
 
-		const int kLength = 5;
-		const int kCrossover = kLength/2;
-		const int kInitialPopulation = 1000;
+		 
+		 
+		const int kInitialPopulation =1000;
 		const int kPopulationLimit = 1000;
-		const int kMin = 1;
-		const int kMax = 10;
+	 
 		const float  kMutationFrequency = 0.10f;
-		const float  kDeathFitness = 0.00f;
-		const float  kReproductionFitness = 0.0f;
+		const float  kDeathFitness = 1000.0f;
+		const float  kReproductionFitness = 600.0f;
 
 		ArrayList Genomes = new ArrayList();
 		ArrayList GenomeReproducers  = new ArrayList();
@@ -38,7 +37,7 @@ public class Population
 
 
 
-        public Population(int HousePorgramLength,string HouseProg,List <Mesh> FinalMeshes)
+        public Population(int HousePorgramLength,string HouseProg,List <Mesh> FinalMeshes,Dictionary<string,float> GenomeFitnessPairs)
 		{
           this.HousePorgramLength = HousePorgramLength;
           this.HouseProg = HouseProg;
@@ -47,8 +46,8 @@ public class Population
 
             for  (int i = 0; i < kInitialPopulation; i++)
 			{
-				ListGenome aGenome = new ListGenome(HousePorgramLength,HouseProg,FinalMeshes);
-				aGenome.SetCrossoverPoint(kCrossover);
+				ListGenome aGenome = new ListGenome(HousePorgramLength,HouseProg,FinalMeshes, GenomeFitnessPairs);
+			 
 				aGenome.CalculateFitness();
 				Genomes.Add(aGenome);
 			}
@@ -59,7 +58,7 @@ public class Population
 		{
 			if (ListGenome.TheSeed.Next(100) < (int)(kMutationFrequency * 100.0))
 			{
-			  	aGene.Mutate(HouseProg );
+			  	aGene.Mutate(HouseProg);
 			}
 		}
 
@@ -94,7 +93,7 @@ public class Population
 			// do the crossover of the genes and add them to the population
            // DoCrossover(GenomeReproducers);
 
-			//Genomes = (ArrayList)GenomeResults.Clone();
+			Genomes = (ArrayList)GenomeResults.Clone();
 
 			// mutate a few genes in the new population
 			for  (int i = 0; i < Genomes.Count; i++)
@@ -107,12 +106,10 @@ public class Population
 			{
 				((Genome)Genomes[i]).CalculateFitness();
 			}
+       
 
-
-               
-
-			// kill all the genes above the population limit
-			if (Genomes.Count > kPopulationLimit)
+        // kill all the genes above the population limit
+        if (Genomes.Count > kPopulationLimit)
 				Genomes.RemoveRange(kPopulationLimit, Genomes.Count - kPopulationLimit);
 			
 			CurrentPopulation = Genomes.Count;
@@ -129,19 +126,18 @@ public class Population
 
 	 
 
-		public  List <string> WriteNextGeneration()
+		public  void WriteNextGeneration( )
 		{
-
-          List<string> str = new List<string>();
-          
+        
 			for  (int i = 0; i <  CurrentPopulation ; i++)
 			{
-                 Debug.Log(((Genome)Genomes[i]).ToString())  ;         
-			  str.Add(((Genome)Genomes[i]).ToString());
+                   
+                 //Debug.Log(((Genome)Genomes[i]).ToString())  ;         
+			     ((Genome)Genomes[i]).ToDictionary();
             
             }
         
-          return str;
+          
             			 
 		}
 	}

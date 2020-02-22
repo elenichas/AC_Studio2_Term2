@@ -272,21 +272,21 @@ MonoBehaviour:
   RuleRect:
     serializedVersion: 2
     x: 111
-    y: 100
+    y: 110
     width: 78
     height: 46
   NumRect:
     serializedVersion: 2
     x: 24
-    y: 100
+    y: 110
     width: 80
     height: 46
   GaRect:
     serializedVersion: 2
-    x: 20
-    y: 160
-    width: 160
-    height: 60
+    x: 10.25
+    y: 176
+    width: 820
+    height: 50
 --- !u!4 &934078669
 Transform:
   m_ObjectHideFlags: 0
