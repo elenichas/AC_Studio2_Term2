@@ -28,13 +28,24 @@ using UnityEngine;
 		{
 			ListGenome Gene1 = this;
 			ListGenome Gene2 = (ListGenome)a;
-			return Math.Sign(Gene2.CurrentFitness  -  Gene1.CurrentFitness);
+        if (Gene1.CurrentFitness > Gene2.CurrentFitness)
+            return -1;
+        else if (Gene1.CurrentFitness < Gene2.CurrentFitness)
+            return 1;
+        else
+            return 0;
+			 
+         
 		}
+    public override void SetCrossoverPoint(int crossoverPoint)
+    {
+        CrossoverPoint = crossoverPoint;
+    }
 
 
-		 
 
-		public ListGenome()
+
+    public ListGenome()
 		{
 
 		}
@@ -86,21 +97,19 @@ using UnityEngine;
 
 
 		public override char GenerateGeneValue(string HouseProg)
-		{
-          
-         
+		{        
          char RandRoom = letters[UnityEngine.Random.Range(0, letters.Count)];
          letters.Remove(RandRoom);
            
            return RandRoom;
+            
 		}
 
 		public override void Mutate(string HouseProg)
 		{
 			MutationIndex = UnityEngine.Random.Range(1,HouseProg.Length);
             TheArray.Reverse(MutationIndex-1,MutationIndex);
-			//char val = GenerateGeneValue(HouseProg );
-			//TheArray[MutationIndex] = val;
+			 
 
 		}
 
@@ -198,7 +207,7 @@ using UnityEngine;
 			  strResult = strResult + (TheArray[i]).ToString();
 			}
 
-        if(!GenomeFitnessPairs.ContainsKey(strResult))
+           if(!GenomeFitnessPairs.ContainsKey(strResult))
             GenomeFitnessPairs.Add(strResult, CurrentFitness);
          
        
@@ -213,6 +222,48 @@ using UnityEngine;
 			theGene.TheMax = TheMax;
 		}
 
+      public override Genome Crossover(Genome g)
+      {
+        ListGenome aGene1 = new ListGenome();
+        ListGenome aGene2 = new ListGenome();
+        g.CopyGeneInfo(aGene1);
+        g.CopyGeneInfo(aGene2);
 
-    }
+
+        ListGenome CrossingGene = (ListGenome)g;
+        for (int i = 0; i < CrossoverPoint; i++)
+        {
+            aGene1.TheArray.Add(CrossingGene.TheArray[i]);
+            aGene2.TheArray.Add(TheArray[i]);
+        }
+
+        for (int j = CrossoverPoint; j < Length; j++)
+        {
+            aGene1.TheArray.Add(TheArray[j]);
+            aGene2.TheArray.Add(CrossingGene.TheArray[j]);
+        }
+
+        // 50/50 chance of returning gene1 or gene2
+        ListGenome aGene = null;
+        if (TheSeed.Next(2) == 1)
+        {
+            aGene = aGene1;
+        }
+        else
+        {
+            aGene = aGene2;
+        }
+
+        return aGene;
+      }
+
+}
+
+
+
+
+
+
+
+    
  

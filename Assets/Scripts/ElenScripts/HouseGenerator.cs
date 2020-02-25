@@ -31,12 +31,12 @@ public class HouseGenerator : MonoBehaviour
     //Start with Rule to avoid null
     string Rule = "A";
     string HouseProg = "kb";
-    
-    House myHouse;
-     
+    string first = "Best Labeling";
 
-    //the dictionary that will store the Genome versions and their fitness
-    public Dictionary<string, float> GenomeFitnessPairs = new Dictionary<string, float>();
+    House myHouse;
+
+
+    
 
     // Start is called before the first frame update
     void Start()
@@ -82,22 +82,32 @@ public class HouseGenerator : MonoBehaviour
         RuleRect = GUI.Window(0, RuleRect, DoMyWindow, Rule);
 
 
-        
+       
+
+      
         //When you press that button you run the labels Optimization  
         if (GUI.Button(new Rect(s, (s * i++) + 5, 200, 20), "Generate Labels"))
         {
             //Run the GA
-             Population TestPopulation = new Population(HouseProg.Length,HouseProg,FinalMeshes, GenomeFitnessPairs);
-             TestPopulation.WriteNextGeneration( );         
-        }
+            //the dictionary that will store the Genome versions and their fitness
+            Dictionary<string, float> GenomeFitnessPairs = new Dictionary<string, float>();
 
-        string eleos = "";
-        for (int d = 0; d < GenomeFitnessPairs.Count; d++)
-        {
-            eleos += ", " + GenomeFitnessPairs.ElementAt(d);
-            GaRect = GUI.Window(3, GaRect, DoMyWindow, $"{eleos}");
+            Population TestPopulation = new Population(HouseProg.Length, HouseProg, FinalMeshes, GenomeFitnessPairs);
+            TestPopulation.WriteNextGeneration();
+
+            for (int k = 0; k < 10; k++)
+            {
+                TestPopulation.NextGeneration();
+                TestPopulation.WriteNextGeneration();
+                         
+            }
+
+            first = GenomeFitnessPairs.OrderBy(kvp => kvp.Value).First().ToString();
         }
-        Debug.Log(eleos);
+       
+        Debug.Log(first);
+
+        GaRect = GUI.Window(3, GaRect, DoMyWindow, first);
     }
 
         

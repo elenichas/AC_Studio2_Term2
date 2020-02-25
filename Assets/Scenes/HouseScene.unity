@@ -283,10 +283,10 @@ MonoBehaviour:
     height: 46
   GaRect:
     serializedVersion: 2
-    x: 10.25
-    y: 176
-    width: 820
-    height: 50
+    x: 510
+    y: 183
+    width: 200
+    height: 60
 --- !u!4 &934078669
 Transform:
   m_ObjectHideFlags: 0
