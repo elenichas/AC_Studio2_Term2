@@ -1,136 +1,120 @@
 using System;
 using System.Collections;
- 
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-/// <summary>
-/// Summary description for Population.
-/// </summary>
 public class Population
-	{
+{
 
 
-      const int kLength = 5;
-      const int kCrossover = kLength / 2;
-      const int kInitialPopulation = 1000;
-      const int kPopulationLimit = 1000;
-      const int kMin = 1;
-      const int kMax = 10;
-      const float kMutationFrequency = 0.10f;
-      const float kDeathFitness = 0.00f;
-      const float kReproductionFitness = 0.0f;
+    const int kInitialPopulation = 1000;
+    const int kPopulationLimit = 1000;
 
-      ArrayList Genomes = new ArrayList();
-      ArrayList GenomeReproducers = new ArrayList();
-      ArrayList GenomeResults = new ArrayList();
-      ArrayList GenomeFamily = new ArrayList();
+    const float kMutationFrequency = 0.10f;
+    const float kDeathFitness = 80.0f;
+    const float kReproductionFitness = 30.0f;
 
-        int		  CurrentPopulation = kInitialPopulation;
-		int		  Generation = 1;
-		bool	  Best2 = true;
+    //In ArrayList we can store different datatype variables.
+    ArrayList Genomes = new ArrayList();
+    ArrayList GenomeReproducers = new ArrayList();
+    ArrayList GenomeResults = new ArrayList();
+    ArrayList GenomeFamily = new ArrayList();
 
-        public int HousePorgramLength;
-         public string HouseProg;
-         public List<Mesh> FinalMeshes;
+    int CurrentPopulation = kInitialPopulation;
+    int Generation = 1;
+    bool Best2 = true;
 
-
-
-        public Population(int HousePorgramLength,string HouseProg,List <Mesh> FinalMeshes,Dictionary<string,float> GenomeFitnessPairs)
-		{
-          this.HousePorgramLength = HousePorgramLength;
-          this.HouseProg = HouseProg;
-           this.FinalMeshes = FinalMeshes;
-
-
-            for  (int i = 0; i < kInitialPopulation; i++)
-			{
-				ListGenome aGenome = new ListGenome(HousePorgramLength,HouseProg,FinalMeshes, GenomeFitnessPairs);
-			 
-				aGenome.CalculateFitness();
-				Genomes.Add(aGenome);
-               
-			}
-            Genomes.Sort();
-
-		}
-
-		private void Mutate(Genome aGene)
-		{
-			if (ListGenome.TheSeed.Next(100) < (int)(kMutationFrequency * 100.0))
-			{
-			  	aGene.Mutate(HouseProg);
-			}
-		}
-
-		public void NextGeneration()
-		{
-			// increment the generation;
-			Generation++; 
+    public int HousePorgramLength;
+    public string HouseProg;
+    public List<Mesh> FinalMeshes;
 
 
 
-			// check who can die
-			for  (int i = 0; i < Genomes.Count; i++)
-			{
-				if  (((Genome)Genomes[i]).CanDie(kDeathFitness))
-				{
-					Genomes.RemoveAt(i);
-					i--;
-				}
-			}
+    public Population(int HousePorgramLength, string HouseProg, List<Mesh> FinalMeshes, Dictionary<string, float> GenomeFitnessPairs)
+    {
+        this.HousePorgramLength = HousePorgramLength;
+        this.HouseProg = HouseProg;
+        this.FinalMeshes = FinalMeshes;
 
 
-			// determine who can reproduce
-			GenomeReproducers.Clear();
-			GenomeResults.Clear();
-			for  (int i = 0; i < Genomes.Count; i++)
-			{
-				if (((Genome)Genomes[i]).CanReproduce(kReproductionFitness))
-				{
-					GenomeReproducers.Add(Genomes[i]);			
-				}
-			}
-			
-			// do the crossover of the genes and add them to the population
-           DoCrossover(GenomeReproducers);
+        for (int i = 0; i < kInitialPopulation; i++)
+        {
+            ListGenome aGenome = new ListGenome(HousePorgramLength, HouseProg, FinalMeshes, GenomeFitnessPairs);
+            aGenome.SetCrossoverPoint(2);
+            aGenome.CalculateFitness();
+            Genomes.Add(aGenome);
 
-			Genomes = (ArrayList)GenomeResults.Clone();
+        }
+        Genomes.Sort();
 
-			// mutate a few genes in the new population
-			for  (int i = 0; i < Genomes.Count; i++)
-			{
-				Mutate((Genome)Genomes[i]);
-			}
+    }
 
-			// calculate fitness of all the genes
-			for  (int i = 0; i < Genomes.Count; i++)
-			{
-				((Genome)Genomes[i]).CalculateFitness();
-			}
-       
+    private void Mutate(Genome aGene)
+    {
+        if (ListGenome.TheSeed.Next(100) < (int)(kMutationFrequency * 100.0))
+        {
+            aGene.Mutate(HouseProg);
+        }
+    }
 
+    public void NextGeneration()
+    {
+        // increment the generation;
+        Generation++;
 
-         // kill all the genes above the population limit
-         if (Genomes.Count > kPopulationLimit)
-				Genomes.RemoveRange(kPopulationLimit, Genomes.Count - kPopulationLimit);
-			
-			CurrentPopulation = Genomes.Count;
-			
-		}
+        // check who can die
+        for (int i = 0; i < Genomes.Count; i++)
+        {
+            if (((Genome)Genomes[i]).CanDie(kDeathFitness))
+            {
+                Genomes.RemoveAt(i);
+                i--;
+            }
+        }
 
-		public void CalculateFitnessForAll(ArrayList genes)
-		{
-			foreach(ListGenome lg in genes)
-			{
-			  lg.CalculateFitness();
-			}
-		}
+        // determine who can reproduce
+        GenomeReproducers.Clear();
+        GenomeResults.Clear();
+        for (int i = 0; i < Genomes.Count; i++)
+        {
+            if (((Genome)Genomes[i]).CanReproduce(kReproductionFitness))
+            {
+                GenomeReproducers.Add(Genomes[i]);
+            }
+        }
 
+        // do the crossover of the genes and add them to the population
+        DoCrossover(GenomeReproducers);
 
-    /////////////////////////////////////////////
+        Genomes = (ArrayList)GenomeResults.Clone();
+
+        // mutate a few genes in the new population
+        for (int i = 0; i < Genomes.Count; i++)
+        {
+            Mutate((Genome)Genomes[i]);
+        }
+
+        // calculate fitness of all the genes
+        for (int i = 0; i < Genomes.Count; i++)
+        {
+            ((Genome)Genomes[i]).CalculateFitness();
+        }
+
+        // kill all the genes above the population limit
+        if (Genomes.Count > kPopulationLimit)
+
+            Genomes.RemoveRange(kPopulationLimit, Genomes.Count - kPopulationLimit);
+        CurrentPopulation = Genomes.Count;
+    }
+
+    public void CalculateFitnessForAll(ArrayList genes)
+    {
+        foreach (ListGenome lg in genes)
+        {
+            lg.CalculateFitness();
+        }
+    }
+
     public void DoCrossover(ArrayList genes)
     {
         ArrayList GeneMoms = new ArrayList();
@@ -210,19 +194,14 @@ public class Population
     }
 
 
-    public  void WriteNextGeneration( )
-		{
-        
-			for  (int i = 0; i <  CurrentPopulation ; i++)
-			{
-                   
-                 //Debug.Log(((Genome)Genomes[i]).ToString())  ;         
-			     ((Genome)Genomes[i]).ToDictionary();
-            
-            }
-        
-          
-            			 
-		}
-	}
+    public void WriteNextGeneration()
+    {
+        Debug.Log(Generation);
+        for (int i = 0; i < CurrentPopulation; i++)
+        {
+            ((Genome)Genomes[i]).ToDictionary();
+        }
+
+    }
+}
 

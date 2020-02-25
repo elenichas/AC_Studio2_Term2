@@ -129,62 +129,61 @@ using UnityEngine;
         { 
             switch(TheArray[i])
             {
+                //kitchen
                 case 'k':
              
-                float idealK = 400;
+                float idealK = 30;
                 float areak = MeshArea(FinalMeshes[i]);
                 float rfk = Math.Abs(idealK - areak);
                 total_fitness += rfk;
                     break;
 
+                //living room
                 case 'l':
            
-                float idealL = 144;
+                float idealL = 25;
                float areal = MeshArea(FinalMeshes[i]); 
                 float rfl = Math.Abs(idealL - areal);
                 total_fitness += rfl;
                     break;
 
+               //bedroom
                 case 'b':
             
-                float idealB = 80;
-                float areab = MeshArea(FinalMeshes[i]); ;
+                float idealB = 20;
+                float areab = MeshArea(FinalMeshes[i]); 
                 float rfb = Math.Abs(idealB - areab);
                 total_fitness += rfb;
                     break;
 
+                //bathroom wc
                 case 'w':
              
-                float idealW = 72;
-                float areaw = MeshArea(FinalMeshes[i]); ;
+                float idealW = 4;
+                float areaw = MeshArea(FinalMeshes[i]); 
                 float rfw = Math.Abs(idealW - areaw);
                 total_fitness += rfw;
                     break;
 
+                //office-workspace
                 case 'o':
             
-                float idealO = 90;
-                float areao = MeshArea(FinalMeshes[i]); ;
+                float idealO = 10;
+                float areao = MeshArea(FinalMeshes[i]); 
                 float rfo = Math.Abs(idealO - areao);
                 total_fitness += rfo;
                     break;
 
 
+                //storage
                 case 's':
             
-                float idealS = 70;
+                float idealS = 2.5f;
                 float areas = MeshArea(FinalMeshes[i]); 
                float rfs = Math.Abs(idealS - areas);
                 total_fitness += rfs;
                     break;
-
-                case 't':
-            
-                float idealY = 65;
-                float areay = MeshArea(FinalMeshes[i]); 
-                float rfy = Math.Abs(idealY - areay);
-                total_fitness += rfy;
-                    break;
+ 
             }
         }
 
@@ -217,9 +216,9 @@ using UnityEngine;
 		public override void CopyGeneInfo(Genome dest)
 		{
 			ListGenome theGene = (ListGenome)dest;
-			theGene.Length = Length;
-			theGene.TheMin = TheMin;
-			theGene.TheMax = TheMax;
+			//theGene.Length = Length;
+			//theGene.TheMin = TheMin;
+			//theGene.TheMax = TheMax;
 		}
 
       public override Genome Crossover(Genome g)

@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using System.Threading;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -9,11 +7,10 @@ using TMPro;
 
 public class HouseGenerator : MonoBehaviour
 {
-    //tHE final meshes to be visualized
+    //The final meshes to be visualized(the house representation)
     List<Mesh> FinalMeshes = new List<Mesh>();
 
-
-    // Set the materials in the inspector
+    //Materials for each Room set the materials in the inspector
     public Material[] myMaterials = new Material[20];
 
     //UI
@@ -22,21 +19,15 @@ public class HouseGenerator : MonoBehaviour
     public Rect RuleRect = new Rect(0, 0, 5, 2);
     public Rect NumRect = new Rect(0,0, 5, 2);
     public Rect GaRect = new Rect(0, 0, 5, 2);
+    public GameObject Panel;
 
-    //GUI Inputs 
-    // public TextMeshProUGUI ErrorsZone;
-    // public TextMeshProUGUI GaPreview;
-
-
-    //Start with Rule to avoid null
+    //Initialize to avoid null
     string Rule = "A";
     string HouseProg = "kb";
     string first = "Best Labeling";
 
+    //Call the house class
     House myHouse;
-
-
-    
 
     // Start is called before the first frame update
     void Start()
@@ -49,7 +40,8 @@ public class HouseGenerator : MonoBehaviour
         {
             Mesh rect2 = item.Rec;
             FinalMeshes.Add(rect2);           
-        }    
+        }
+        Panel.SetActive(false);
     }
     // Update is called once per frame
     void Update()
@@ -68,26 +60,25 @@ public class HouseGenerator : MonoBehaviour
         int s = 25;
         GUI.skin = _skin;
         
-        //when you press Make House it gets the number of rooms you entered
-        //and tries to find a random rule that can give that numbers of rooms
+        //when you press Make House BUTTON it gets the number of rooms you entered
+        //and tries to find a random rule that can give that number of rooms
         HouseProg = GUI.TextField(new Rect(s, s * i++, 200, 20), HouseProg);
         if (GUI.Button(new Rect(s, (s * i++)+5, 200, 20), "Make House"))
         {
-            MakeHouse();
-                         
+
+            Panel.SetActive(false);
+            MakeHouse();                       
         }
       
-        //the preview rectangles for the number of rooms and the current Rule
+        //output the number of rooms
         NumRect = GUI.Window(1, NumRect, DoMyWindow, $"{myHouse.GetRoomNum()}");
+        //output the current Rule
         RuleRect = GUI.Window(0, RuleRect, DoMyWindow, Rule);
 
 
-       
-
-      
-        //When you press that button you run the labels Optimization  
+        //When you press Generate Labels BUTTON you run the labels Optimization  
         if (GUI.Button(new Rect(s, (s * i++) + 5, 200, 20), "Generate Labels"))
-        {
+        {           
             //Run the GA
             //the dictionary that will store the Genome versions and their fitness
             Dictionary<string, float> GenomeFitnessPairs = new Dictionary<string, float>();
@@ -95,26 +86,27 @@ public class HouseGenerator : MonoBehaviour
             Population TestPopulation = new Population(HouseProg.Length, HouseProg, FinalMeshes, GenomeFitnessPairs);
             TestPopulation.WriteNextGeneration();
 
-            for (int k = 0; k < 10; k++)
+            for (int k = 0; k < 100; k++)
             {
                 TestPopulation.NextGeneration();
-                TestPopulation.WriteNextGeneration();
-                         
+                TestPopulation.WriteNextGeneration();                       
             }
 
+            //output the best individual after 100 generations
             first = GenomeFitnessPairs.OrderBy(kvp => kvp.Value).First().ToString();
-        }
-       
-        Debug.Log(first);
 
+            //check if the last is actually worse than the first I am getting
+            Debug.Log(GenomeFitnessPairs.OrderBy(kvp => kvp.Value).Last().ToString());
+        }
+            
+        //output the best individual as a pair of labels and fitness
         GaRect = GUI.Window(3, GaRect, DoMyWindow, first);
     }
-
-        
+      
     public void MakeHouse()
     {      
         //check for accurate Room labels
-        if (isValid(HouseProg))
+        if (IsValid(HouseProg))
         {
             //Find a rule that can generate that number of rooms
             int counter = 0;
@@ -132,8 +124,8 @@ public class HouseGenerator : MonoBehaviour
         }
         else
         {
-            
-            Debug.Log("Some of the Rooms are not valid");
+            //error window pops up when you mistype rooms(rooms that don't exist in the GA)
+            Panel.SetActive(true);          
         }
 
     }
@@ -170,12 +162,10 @@ public class HouseGenerator : MonoBehaviour
            Debug.Log(FinalMeshes.Count);
         } 
     }
-    //check for valid chars in user input
-    private static bool isValid(string str)
+   
+    private static bool IsValid(string str)
     {
+        //check for valid chars in user input
         return Regex.IsMatch(str, @"^[ktblwso]+$");
     }
-
 }
-
-

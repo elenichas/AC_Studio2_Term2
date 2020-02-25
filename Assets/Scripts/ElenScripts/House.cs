@@ -23,9 +23,9 @@ public class House
         Vector3[] verticesp = new Vector3[4];
 
         verticesp[0] = new Vector3(0, 0, 0);
-        verticesp[1] = new Vector3(0, 0, 30);
-        verticesp[2] = new Vector3(40, 0, 30);
-        verticesp[3] = new Vector3(40, 0,0);
+        verticesp[1] = new Vector3(0, 0, 10);
+        verticesp[2] = new Vector3(12, 0, 10);
+        verticesp[3] = new Vector3(12, 0,0);
 
         parentrec.vertices = verticesp;
         parentrec.triangles = new int[] { 0, 3, 2, 0, 2, 1 };
