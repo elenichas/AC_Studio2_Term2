@@ -99,12 +99,12 @@ public class House
                                 next.AddRange(RuleG(currentRoom)); break;
 
                             //Dissect in shortest side(1/3 - 2/3) next rule applies to both Room.
-                            case 'H':
-                                next.AddRange(RuleH(currentRoom)); break;
+                           // case 'H':
+                              //  next.AddRange(RuleH(currentRoom)); break;
 
                             //Dissect in shortest side(2/3 - 1/3) next rule applies to both Room.
-                            case 'I':
-                                next.AddRange(RuleI(currentRoom)); break;
+                           // case 'I':
+                               // next.AddRange(RuleI(currentRoom)); break;
 
                             //Dissect in shortest side(1/2 - 1/2) next rule applies to first Room.
                             case 'J':
@@ -115,8 +115,8 @@ public class House
                                 next.AddRange(RuleK(currentRoom)); break;
 
                             //Dissect in shortest side(1/2- 1/2)  next rule applies to second Room.
-                            case 'L':
-                                next.AddRange(RuleL(currentRoom)); break;
+                            //case 'L':
+                               // next.AddRange(RuleL(currentRoom)); break;
                         }
                     }
                 }

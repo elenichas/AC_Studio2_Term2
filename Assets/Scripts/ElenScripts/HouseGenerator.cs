@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Threading;
 using System.Linq;
 using System.Text.RegularExpressions;
+using UnityEngine.UI;
 using TMPro;
 
 public class HouseGenerator : MonoBehaviour
@@ -21,10 +22,11 @@ public class HouseGenerator : MonoBehaviour
     public Rect GaRect = new Rect(0, 0, 5, 2);
     public GameObject Panel;
 
-    //Initialize to avoid null
-    string Rule = "A";
-    string HouseProg = "kb";
+    //Initialize Strings
+    string Rule = "";
+    string HouseProg = "";
     string first = "Best Labeling";
+
 
     //Call the house class
     House myHouse;
@@ -42,16 +44,33 @@ public class HouseGenerator : MonoBehaviour
             FinalMeshes.Add(rect2);           
         }
         Panel.SetActive(false);
+
     }
     // Update is called once per frame
     void Update()
     {
+        
+
+
+    }
+
+    public void DrawHouse()
+    {
         //For each Room you made in Run() draw the mesh
         for (int i = 0; i < myHouse.GetFinalRooms().Count; i++)
         {
-          Graphics.DrawMesh(FinalMeshes[i], new Vector3(0, 0, 0), Quaternion.identity, myMaterials[i], 0);
+            // Graphics.DrawMesh(FinalMeshes[i], new Vector3(0, 0, 0), Quaternion.identity, myMaterials[i], 0);
+            GameObject gameob = new GameObject("Mesh", typeof(MeshFilter), typeof(MeshRenderer));
+            gameob.GetComponent<MeshFilter>().mesh = FinalMeshes[i];
+            gameob.GetComponent<MeshRenderer>().material = myMaterials[i];
+            
         }
-               
+    }
+
+    public void DrawLabels()
+    {
+        
+
     }
 
     void OnGUI()
@@ -67,7 +86,9 @@ public class HouseGenerator : MonoBehaviour
         {
 
             Panel.SetActive(false);
-            MakeHouse();                       
+            MakeHouse();
+            DrawHouse();
+           
         }
       
         //output the number of rooms
@@ -98,7 +119,8 @@ public class HouseGenerator : MonoBehaviour
             //check if the last is actually worse than the first I am getting
             Debug.Log(GenomeFitnessPairs.OrderBy(kvp => kvp.Value).Last().ToString());
         }
-            
+          DrawLabels();
+
         //output the best individual as a pair of labels and fitness
         GaRect = GUI.Window(3, GaRect, DoMyWindow, first);
     }
