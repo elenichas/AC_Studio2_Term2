@@ -196,7 +196,7 @@ public class Population
 
     public void WriteNextGeneration()
     {
-        Debug.Log(Generation);
+        //Debug.Log(Generation);
         for (int i = 0; i < CurrentPopulation; i++)
         {
             ((Genome)Genomes[i]).ToDictionary();

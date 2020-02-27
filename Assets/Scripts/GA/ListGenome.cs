@@ -12,40 +12,38 @@ using UnityEngine;
 	public class ListGenome : Genome
 	{
         public static System.Random TheSeed = new System.Random((int)DateTime.Now.Ticks);
-        List<char> TheArray = new List<char>();
-      
-		int TheMin = 0;
-		int TheMax = 10;
+        public List<char> TheArray = new List<char>();
+        
+       //the string as given from the user(no commas expected)
+        public string HouseProg;
 
-       public string HouseProg;
-       public List<Mesh> FinalMeshes;
+      //the list of characters taken from the HouseProg
+        public List<char> letters;
 
-    List<char> letters;
+        public List<Mesh> FinalMeshes;
 
-    public Dictionary<string, float> GenomeFitnessPairs;
+        //the dictionarywith pairs of individuals and their fitnesses
+        public Dictionary<string, float> GenomeFitnessPairs;
 
-    public override int CompareTo(object a)
-		{
-			ListGenome Gene1 = this;
-			ListGenome Gene2 = (ListGenome)a;
-        if (Gene1.CurrentFitness > Gene2.CurrentFitness)
+        public override int CompareTo(object a)
+        {
+          ListGenome Gene1 = this;
+          ListGenome Gene2 = (ListGenome)a;
+          if (Gene1.CurrentFitness > Gene2.CurrentFitness)
             return -1;
-        else if (Gene1.CurrentFitness < Gene2.CurrentFitness)
+          else if (Gene1.CurrentFitness < Gene2.CurrentFitness)
             return 1;
-        else
+          else
             return 0;
+        }
 			 
-         
-		}
-    public override void SetCrossoverPoint(int crossoverPoint)
-    {
-        CrossoverPoint = crossoverPoint;
-    }
+       
+         public override void SetCrossoverPoint(int crossoverPoint)
+         {
+           CrossoverPoint = crossoverPoint;
+         }
 
-
-
-
-    public ListGenome()
+        public ListGenome()
 		{
 
 		}
@@ -60,7 +58,7 @@ using UnityEngine;
           this.GenomeFitnessPairs = GenomeFitnessPairs;
            letters = HouseProg.ToList();
 
-        for (int i = 0; i < Length; i++)
+            for (int i = 0; i < Length; i++)
 			{
 			   char gene = GenerateGeneValue(HouseProg);
               
@@ -117,7 +115,7 @@ using UnityEngine;
        {
         float Area = mesh.bounds.size.x * mesh.bounds.size.z;
 
-        return Area;
+         return Area;
 
        }
 
@@ -125,8 +123,8 @@ using UnityEngine;
        private float CalculateHouseFitnessSum()
         {
           float total_fitness = 0;
-        for (int i = 0; i < TheArray.Count; i++)
-        { 
+         for (int i = 0; i < TheArray.Count; i++)
+         { 
             switch(TheArray[i])
             {
                 //kitchen
@@ -183,19 +181,15 @@ using UnityEngine;
                float rfs = Math.Abs(idealS - areas);
                 total_fitness += rfs;
                     break;
- 
             }
-        }
-
-
-          return total_fitness;
-        }
+         }
+           return total_fitness;
+       }
 
 		public override float CalculateFitness()
 		{
           CurrentFitness = CalculateHouseFitnessSum();
- 
-			return CurrentFitness;
+          return CurrentFitness;
 		}
 
 		public override  void ToDictionary()
@@ -207,18 +201,12 @@ using UnityEngine;
 			}
 
            if(!GenomeFitnessPairs.ContainsKey(strResult))
-            GenomeFitnessPairs.Add(strResult, CurrentFitness);
-         
-       
-       		 
+            GenomeFitnessPairs.Add(strResult, CurrentFitness);    		 
 		}
 
 		public override void CopyGeneInfo(Genome dest)
 		{
-			ListGenome theGene = (ListGenome)dest;
-			//theGene.Length = Length;
-			//theGene.TheMin = TheMin;
-			//theGene.TheMax = TheMax;
+			ListGenome theGene = (ListGenome)dest;	 
 		}
 
       public override Genome Crossover(Genome g)
@@ -228,14 +216,12 @@ using UnityEngine;
         g.CopyGeneInfo(aGene1);
         g.CopyGeneInfo(aGene2);
 
-
         ListGenome CrossingGene = (ListGenome)g;
         for (int i = 0; i < CrossoverPoint; i++)
         {
             aGene1.TheArray.Add(CrossingGene.TheArray[i]);
             aGene2.TheArray.Add(TheArray[i]);
         }
-
         for (int j = CrossoverPoint; j < Length; j++)
         {
             aGene1.TheArray.Add(TheArray[j]);
@@ -256,7 +242,7 @@ using UnityEngine;
         return aGene;
       }
 
-}
+    }
 
 
 

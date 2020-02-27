@@ -8,25 +8,22 @@ using TMPro;
 
 public class HouseGenerator : MonoBehaviour
 {
+    public Transform RoomParent;
     //The final meshes to be visualized(the house representation)
     List<Mesh> FinalMeshes = new List<Mesh>();
 
-    //Materials for each Room set the materials in the inspector
+    //Materials for each Room, set the materials in the inspector
     public Material[] myMaterials = new Material[20];
 
     //UI
-    [SerializeField] GUISkin _skin = null;
-    CancellationTokenSource _cancel = new CancellationTokenSource();
-    public Rect RuleRect = new Rect(0, 0, 5, 2);
-    public Rect NumRect = new Rect(0,0, 5, 2);
-    public Rect GaRect = new Rect(0, 0, 5, 2);
     public GameObject Panel;
-
+    public Text myText;
+    public Text myOtherText;
+  
     //Initialize Strings
     string Rule = "";
     string HouseProg = "";
-    string first = "Best Labeling";
-
+    string first = " ";
 
     //Call the house class
     House myHouse;
@@ -54,79 +51,9 @@ public class HouseGenerator : MonoBehaviour
 
     }
 
-    public void DrawHouse()
-    {
-        //For each Room you made in Run() draw the mesh
-        for (int i = 0; i < myHouse.GetFinalRooms().Count; i++)
-        {
-            // Graphics.DrawMesh(FinalMeshes[i], new Vector3(0, 0, 0), Quaternion.identity, myMaterials[i], 0);
-            GameObject gameob = new GameObject("Mesh", typeof(MeshFilter), typeof(MeshRenderer));
-            gameob.GetComponent<MeshFilter>().mesh = FinalMeshes[i];
-            gameob.GetComponent<MeshRenderer>().material = myMaterials[i];
-            
-        }
-    }
-
-    public void DrawLabels()
-    {
-        
-
-    }
-
-    void OnGUI()
-    {
-        int i = 1;
-        int s = 25;
-        GUI.skin = _skin;
-        
-        //when you press Make House BUTTON it gets the number of rooms you entered
-        //and tries to find a random rule that can give that number of rooms
-        HouseProg = GUI.TextField(new Rect(s, s * i++, 200, 20), HouseProg);
-        if (GUI.Button(new Rect(s, (s * i++)+5, 200, 20), "Make House"))
-        {
-
-            Panel.SetActive(false);
-            MakeHouse();
-            DrawHouse();
-           
-        }
-      
-        //output the number of rooms
-        NumRect = GUI.Window(1, NumRect, DoMyWindow, $"{myHouse.GetRoomNum()}");
-        //output the current Rule
-        RuleRect = GUI.Window(0, RuleRect, DoMyWindow, Rule);
-
-
-        //When you press Generate Labels BUTTON you run the labels Optimization  
-        if (GUI.Button(new Rect(s, (s * i++) + 5, 200, 20), "Generate Labels"))
-        {           
-            //Run the GA
-            //the dictionary that will store the Genome versions and their fitness
-            Dictionary<string, float> GenomeFitnessPairs = new Dictionary<string, float>();
-
-            Population TestPopulation = new Population(HouseProg.Length, HouseProg, FinalMeshes, GenomeFitnessPairs);
-            TestPopulation.WriteNextGeneration();
-
-            for (int k = 0; k < 100; k++)
-            {
-                TestPopulation.NextGeneration();
-                TestPopulation.WriteNextGeneration();                       
-            }
-
-            //output the best individual after 100 generations
-            first = GenomeFitnessPairs.OrderBy(kvp => kvp.Value).First().ToString();
-
-            //check if the last is actually worse than the first I am getting
-            Debug.Log(GenomeFitnessPairs.OrderBy(kvp => kvp.Value).Last().ToString());
-        }
-          DrawLabels();
-
-        //output the best individual as a pair of labels and fitness
-        GaRect = GUI.Window(3, GaRect, DoMyWindow, first);
-    }
-      
+    //STEP 1
     public void MakeHouse()
-    {      
+    {
         //check for accurate Room labels
         if (IsValid(HouseProg))
         {
@@ -137,37 +64,92 @@ public class HouseGenerator : MonoBehaviour
                 counter++;
                 //try a shorter rule length for less rooms programms(it crushes otherwise)
                 if (HouseProg.Length > 5)
-                    Run(4);
+                    GetHouseAsMesh(4);
                 else if (HouseProg.Length <= 3)
-                    Run(2);
+                    GetHouseAsMesh(2);
                 else
-                    Run(3);
+                    GetHouseAsMesh(3);
             }
         }
         else
         {
             //error window pops up when you mistype rooms(rooms that don't exist in the GA)
-            Panel.SetActive(true);          
+            Panel.SetActive(true);
+        }
+        myOtherText.text = $"{myHouse.GetRoomNum()}" + " Rooms in " + Rule;
+
+    }
+
+    //STEP 2
+    public void DrawHouse()
+    {
+        //kill 'em all
+        for (int j = 0; j < RoomParent.childCount; j++)
+        {
+            Destroy(RoomParent.GetChild(j).gameObject);
         }
 
-    }
-    void DoMyWindow(int windowID)
-    {
-        // Make the window be draggable.
-        GUI.DragWindow(new Rect(0, 0, 10000, 10000));       
+        //For each Room you made in Run() draw the mesh
+        for (int i = 0; i < myHouse.GetFinalRooms().Count; i++)
+        {
+            
+            GameObject gameob = new GameObject("Mesh"+ $"{i}", typeof(MeshFilter), typeof(MeshRenderer),typeof(Text));
+            gameob.GetComponent<MeshFilter>().mesh = FinalMeshes[i];
+            gameob.GetComponent<MeshRenderer>().material = myMaterials[i];
+            
+            //put all the gameobjects to a parent object
+            gameob.transform.SetParent(RoomParent);      
+        }
     }
 
-    private void OnApplicationQuit()
+   
+    //STEP 3
+    public void RunGa()
     {
-        _cancel.Cancel();
+        //Run the GA
+        //the dictionary that will store the Genome versions and their fitness
+        Dictionary<string, float> GenomeFitnessPairs = new Dictionary<string, float>();
+
+        Population TestPopulation = new Population(HouseProg.Length, HouseProg, FinalMeshes, GenomeFitnessPairs);
+        TestPopulation.WriteNextGeneration();
+
+        for (int k = 0; k < 100; k++)
+        {
+            TestPopulation.NextGeneration();
+            TestPopulation.WriteNextGeneration();
+        }
+
+        //output the best individual after 100 generations
+        first = GenomeFitnessPairs.OrderBy(kvp => kvp.Value).First().ToString();
+
+        //check if the last is actually worse than the first I am getting
+        Debug.Log(GenomeFitnessPairs.OrderBy(kvp => kvp.Value).Last().ToString());
+        myText.text = first;
+
     }
 
-    void Run( int length)
+    //STEP 4
+    public void DrawLabels()
+    {
+        for (int i = 0; i < FinalMeshes.Count; i++)
+        {
+
+
+        }
+    }
+
+    //Get the rooms defined by the user
+    public void onUserInput(string st)
+    {
+        HouseProg = st;
+    }
+      
+
+    void GetHouseAsMesh( int length)
     {
         //Clear the lists from previous given Rule, to visualize the next
         FinalMeshes.Clear();
-        _cancel.Cancel();
-        _cancel = new CancellationTokenSource();
+      
 
         // Create the House Class Instance  
         RandomRuleGen R = new RandomRuleGen(length);
@@ -181,7 +163,7 @@ public class HouseGenerator : MonoBehaviour
         {
            Mesh rect2 = item.Rec;
            FinalMeshes.Add(rect2);
-           Debug.Log(FinalMeshes.Count);
+          
         } 
     }
    
