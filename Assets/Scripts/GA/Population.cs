@@ -6,8 +6,8 @@ using UnityEngine;
 public class Population
 {
     const int kCrossover = 3;
-    const int kInitialPopulation = 1000;
-    const int kPopulationLimit = 1000;
+    const int kInitialPopulation = 50;
+    const int kPopulationLimit = 50;
 
     const float kMutationFrequency = 0.10f;
     const float kDeathFitness = 0.0f;
@@ -43,70 +43,78 @@ public class Population
             aGenome.SetCrossoverPoint(kCrossover);
             aGenome.CalculateFitness();
             Genomes.Add(aGenome);
-           
+          
              
-        }     
+        }
+        Debug.Log(Genomes.Count+"the number in constructor");
     }
 
-    private void Mutate(Genome aGene)
+    private Genome Mutate(Genome aGene)
     {
         if (ListGenome.TheSeed.Next(100) < (int)(kMutationFrequency * 100.0))
         {
-            aGene.Mutate( );
+            ((ListGenome)aGene).Mutate( );
         }
+        return aGene;
     }
 
     public void NextGeneration()
     {
         // increment the generation;
-        Generation++;
-
+       
+        Debug.Log("this is generation " + Generation);
         // check who can die
-        Debug.Log(Genomes.Count);
-        for (int i = 0; i < Genomes.Count; i++)
-       {
-            if (((Genome)Genomes[i]).CanDie(kDeathFitness))
-           {
-                Genomes.RemoveAt(i);
-                i--;
-            }
-        }
+        Debug.Log(Genomes.Count+"the number in Next Generation");
+        //// for (int i = 0; i < Genomes.Count; i++)
+        // {
+        //  if (((Genome)Genomes[i]).CanDie(kDeathFitness))
+        //  {
+        //   Genomes.RemoveAt(i);
+        //   i--;
+        // }
+        // }
 
         // determine who can reproduce
-        GenomeReproducers.Clear();
-        GenomeResults.Clear();
-        for (int i = 0; i < Genomes.Count; i++)
-        {
-            if (((Genome)Genomes[i]).CanReproduce(kReproductionFitness))
-            {
-                GenomeReproducers.Add(Genomes[i]);
-            }
-         
-        }
+        GenomeReproducers = new ArrayList();
+        GenomeResults=new ArrayList();
+        Debug.Log("genome count after clearing other arraylists" + Genomes.Count);
+        //    for (int i = 0; i < Genomes.Count; i++)
+        //    {
+        //        if (((ListGenome)Genomes[i]).CanReproduce(kReproductionFitness))
+        //        {
+        //            GenomeReproducers.Add(Genomes[i]);
+        //    }
 
+        //}
+        GenomeReproducers = new ArrayList(Genomes);
         // do the crossover of the genes and add them to the population
         DoCrossover(GenomeReproducers);
+        Debug.Log("this is count after crossover" +Genomes.Count);
+        Debug.Log("this is GenomeReproducers count after crossover" + GenomeResults.Count);
 
-        Genomes = (ArrayList)GenomeResults.Clone();
+        Genomes = GenomeResults;
+        Debug.Log("this is count after cloning " + Genomes.Count);
 
         // mutate a few genes in the new population
         for (int i = 0; i < Genomes.Count; i++)
         {
-            Mutate((Genome)Genomes[i]);
+           Genomes[i]= Mutate((ListGenome)Genomes[i]);
         }
+        Debug.Log("this is count after mutate" + Genomes.Count);
 
         // calculate fitness of all the genes
         for (int i = 0; i < Genomes.Count; i++)
         {
              
-            ((Genome)Genomes[i]).CalculateFitness();
+            ((ListGenome)Genomes[i]).CalculateFitness();
         }
-
+        Debug.Log("this is count after calc fitness" + Genomes.Count);
         // kill all the genes above the population limit
-        if (Genomes.Count > kPopulationLimit)
+        //if (Genomes.Count > kPopulationLimit)
 
-            Genomes.RemoveRange(kPopulationLimit, Genomes.Count - kPopulationLimit);
+            //Genomes.RemoveRange(kPopulationLimit, Genomes.Count - kPopulationLimit);
         CurrentPopulation = Genomes.Count;
+        Generation++;
     }
 
     public void CalculateFitnessForAll(ArrayList genes)
@@ -119,50 +127,18 @@ public class Population
 
     public void DoCrossover(ArrayList genes)
     {
+        Debug.Log("genes coming in crossover " + genes.Count);
+
         ArrayList GeneMoms = new ArrayList();
         ArrayList GeneDads = new ArrayList();
 
         for (int i = 0; i < genes.Count; i++)
         {
-            // randomly pick the moms and dad's
-            if (ListGenome.TheSeed.Next(100) % 2 > 0)
-            {
-                GeneMoms.Add(genes[i]);
-            }
-            else
-            {
-                GeneDads.Add(genes[i]);
-            }
+            GeneMoms.Add(genes[ListGenome.TheSeed.Next(genes.Count)]);
+            GeneDads.Add(genes[ListGenome.TheSeed.Next(genes.Count)]);
         }
-
-        //  now make them equal
-        if (GeneMoms.Count > GeneDads.Count)
-        {
-            while (GeneMoms.Count > GeneDads.Count)
-            {
-                GeneDads.Add(GeneMoms[GeneMoms.Count - 1]);
-                GeneMoms.RemoveAt(GeneMoms.Count - 1);
-            }
-
-            if (GeneDads.Count > GeneMoms.Count)
-            {
-                GeneDads.RemoveAt(GeneDads.Count - 1); // make sure they are equal
-            }
-
-        }
-        else
-        {
-            while (GeneDads.Count > GeneMoms.Count)
-            {
-                GeneMoms.Add(GeneDads[GeneDads.Count - 1]);
-                GeneDads.RemoveAt(GeneDads.Count - 1);
-            }
-
-            if (GeneMoms.Count > GeneDads.Count)
-            {
-                GeneMoms.RemoveAt(GeneMoms.Count - 1); // make sure they are equal
-            }
-        }
+        Debug.Log("genes moms count " + GeneMoms.Count);
+        Debug.Log("genes dads count " + GeneDads.Count);
 
         // now cross them over and add them according to fitness
         for (int i = 0; i < GeneDads.Count; i++)
@@ -171,7 +147,8 @@ public class Population
             ListGenome babyGene1 = (ListGenome)((ListGenome)GeneDads[i]).Crossover((ListGenome)GeneMoms[i]);
             ListGenome babyGene2 = (ListGenome)((ListGenome)GeneMoms[i]).Crossover((ListGenome)GeneDads[i]);
 
-            GenomeFamily.Clear();
+        GenomeFamily.Clear();
+
             GenomeFamily.Add(GeneDads[i]);
             GenomeFamily.Add(GeneMoms[i]);
             GenomeFamily.Add(babyGene1);
@@ -179,27 +156,29 @@ public class Population
             CalculateFitnessForAll(GenomeFamily);
             GenomeFamily.Sort();
 
-            if (Best2 == true)
-            {
+            //if (Best2 == true)
+            //{
                 // if Best2 is true, add top fitness genes
                 GenomeResults.Add(GenomeFamily[0]);
-                GenomeResults.Add(GenomeFamily[1]);
+                //GenomeResults.Add(GenomeFamily[1]);
 
-            }
-            else
-            {
-                GenomeResults.Add(babyGene1);
-                GenomeResults.Add(babyGene2);
-            }
+            //}
+            //else
+            //{
+            //    GenomeResults.Add(babyGene1);
+            //    //GenomeResults.Add(babyGene2);
+            //}
         }
 
+
+        Debug.Log("debug from inside crossover" + GenomeResults.Count);
     }
 
 
     public void WriteNextGeneration()
     {
-          Debug.Log(Generation);
-          Debug.Log(CurrentPopulation);
+         // Debug.Log(Generation);
+         // Debug.Log(CurrentPopulation);
           for (int i = 0; i < CurrentPopulation; i++)
           {
                 ((Genome)Genomes[i]).ToDictionary();

@@ -131,8 +131,6 @@ public class HouseGenerator : MonoBehaviour
             
         //check if the last is actually worse than the first I am getting
         //Debug.Log(GenomeFitnessPairs.OrderBy(kvp => kvp.Value).Last().ToString());
-        
-
     }
 
     //STEP 4
