@@ -19,7 +19,7 @@ public class HouseGenerator : MonoBehaviour
     public GameObject Panel;
     public Text myText;
     public Text myOtherText;
-  
+
     //Initialize Strings
     string Rule = "";
     string HouseProg = "";
@@ -27,26 +27,29 @@ public class HouseGenerator : MonoBehaviour
 
     //Call the house class
     House myHouse;
+    Population TestPopulation;
 
+    List<string> GenomesListOut = new List<string>();
+    
     // Start is called before the first frame update
     void Start()
     {
         myHouse = new House(Rule);
         myHouse.CreateRooms();
         myHouse.GetFinalRooms();
-        
+
         foreach (Room item in myHouse.GetFinalRooms())
         {
             Mesh rect2 = item.Rec;
-            FinalMeshes.Add(rect2);           
+            FinalMeshes.Add(rect2);
         }
         Panel.SetActive(false);
-
+        
     }
     // Update is called once per frame
     void Update()
     {
-        
+
 
 
     }
@@ -92,49 +95,55 @@ public class HouseGenerator : MonoBehaviour
         //For each Room you made in Run() draw the mesh
         for (int i = 0; i < myHouse.GetFinalRooms().Count; i++)
         {
-            
-            GameObject gameob = new GameObject("Mesh"+ $"{i}", typeof(MeshFilter), typeof(MeshRenderer),typeof(Text));
+
+            GameObject gameob = new GameObject("Mesh" + $"{i}", typeof(MeshFilter), typeof(MeshRenderer), typeof(Text));
             gameob.GetComponent<MeshFilter>().mesh = FinalMeshes[i];
             gameob.GetComponent<MeshRenderer>().material = myMaterials[i];
-            
+
             //put all the gameobjects to a parent object
-            gameob.transform.SetParent(RoomParent);      
+            gameob.transform.SetParent(RoomParent);
         }
     }
 
-   
+
     //STEP 3
     public void RunGa()
     {
-        //Run the GA
-        //the dictionary that will store the Genome versions and their fitness
-        Dictionary<string, float> GenomeFitnessPairs = new Dictionary<string, float>();
-
-        Population TestPopulation = new Population(HouseProg.Length, HouseProg, FinalMeshes, GenomeFitnessPairs);
+        // //Run the GA
+        TestPopulation = new Population(HouseProg.Length, HouseProg, FinalMeshes, GenomesListOut);
         TestPopulation.WriteNextGeneration();
+    
+          for (int k = 0; k < 10; k++)
+          {
 
-        for (int k = 0; k < 100; k++)
-        {
             TestPopulation.NextGeneration();
             TestPopulation.WriteNextGeneration();
-        }
+          }
 
-        //output the best individual after 100 generations
-        first = GenomeFitnessPairs.OrderBy(kvp => kvp.Value).First().ToString();
-
-        //check if the last is actually worse than the first I am getting
-        Debug.Log(GenomeFitnessPairs.OrderBy(kvp => kvp.Value).Last().ToString());
+        //output the best individual after 100 generations(??)
+        // first = GenomeFitnessPairs.OrderBy(kvp => kvp.Value).First().ToString();
+        first = GenomesListOut[0];
         myText.text = first;
+        for (int i = 0; i < GenomesListOut.Count; i++)
+        {
+            Debug.Log(GenomesListOut[i]);
+        }
+            
+        //check if the last is actually worse than the first I am getting
+        //Debug.Log(GenomeFitnessPairs.OrderBy(kvp => kvp.Value).Last().ToString());
+        
 
     }
 
     //STEP 4
     public void DrawLabels()
     {
-        for (int i = 0; i < FinalMeshes.Count; i++)
+
+        for (int j = 0; j < RoomParent.childCount; j++)
         {
-
-
+            Vector3 pos = RoomParent.GetChild(j).GetComponent<MeshRenderer>().bounds.center;
+            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            obj.transform.position = pos;
         }
     }
 
@@ -143,13 +152,13 @@ public class HouseGenerator : MonoBehaviour
     {
         HouseProg = st;
     }
-      
 
-    void GetHouseAsMesh( int length)
+
+    void GetHouseAsMesh(int length)
     {
         //Clear the lists from previous given Rule, to visualize the next
         FinalMeshes.Clear();
-      
+
 
         // Create the House Class Instance  
         RandomRuleGen R = new RandomRuleGen(length);
@@ -157,16 +166,16 @@ public class HouseGenerator : MonoBehaviour
         myHouse = new House(Rule);
         myHouse.CreateRooms();
         myHouse.GetFinalRooms();
-            
+
         //For each Room instance get the mesh
         foreach (Room item in myHouse.GetFinalRooms())
         {
-           Mesh rect2 = item.Rec;
-           FinalMeshes.Add(rect2);
-          
-        } 
+            Mesh rect2 = item.Rec;
+            FinalMeshes.Add(rect2);
+
+        }
     }
-   
+
     private static bool IsValid(string str)
     {
         //check for valid chars in user input
