@@ -105,7 +105,6 @@ public class HouseGenerator : MonoBehaviour
         }
     }
 
-
     //STEP 3
     public void RunGa()
     {
