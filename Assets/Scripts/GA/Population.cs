@@ -7,11 +7,11 @@ public class Population
 {
     const int kCrossover = 3;
     const int kInitialPopulation = 50;
-    const int kPopulationLimit = 50;
+   // const int kPopulationLimit = 50;
 
     const float kMutationFrequency = 0.10f;
-    const float kDeathFitness = 0.0f;
-    const float kReproductionFitness = 30.0f;
+    //const float kDeathFitness = 0.0f;
+   // const float kReproductionFitness = 30.0f;
 
     //In ArrayList we can store different datatype variables.
     ArrayList Genomes = new ArrayList();
@@ -21,13 +21,14 @@ public class Population
 
     int CurrentPopulation = kInitialPopulation;
     int Generation = 1;
-    bool Best2 = true;
+    //bool Best2 = true;
 
     public int HousePorgramLength;
     public string HouseProg;
     public List<Mesh> FinalMeshes;
 
     public List <string> GenomesList;
+    public List<string> OnlyG;
 
 
     public Population(int HousePorgramLength, string HouseProg, List<Mesh> FinalMeshes)
@@ -182,10 +183,12 @@ public class Population
         // Debug.Log(Generation);
         // Debug.Log(CurrentPopulation);
         GenomesList = new List<string>();
-          for (int i = 0; i < CurrentPopulation; i++)
-          {
+        OnlyG = new List<string>();
+        for (int i = 0; i < CurrentPopulation; i++)
+        {
             GenomesList.Add(((Genome)Genomes[i]).ToMyString());
-          }
+            OnlyG.Add(((Genome)Genomes[i]).ToMyStringOnlyG());
+        }
         
 
     }

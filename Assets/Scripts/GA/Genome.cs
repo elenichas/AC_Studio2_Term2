@@ -19,6 +19,7 @@ public abstract class Genome : IComparable
     abstract public void SetCrossoverPoint(int crossoverPoint);
     abstract public bool CanDie(float fitness);
     abstract public string ToMyString();
+    abstract public string ToMyStringOnlyG();
     abstract public void CopyGeneInfo(Genome g);
     abstract public int CompareTo(object a);
 

@@ -211,6 +211,18 @@ public class ListGenome : Genome
         return strResult;
             
     }
+    public override string ToMyStringOnlyG()
+    {
+        string strResult = "";
+        for (int i = 0; i < Lengthother; i++)
+        {
+            strResult = strResult + (TheArray[i]).ToString();
+        }
+
+       
+        return strResult;
+
+    }
 
     public override void CopyGeneInfo(Genome dest)
     {

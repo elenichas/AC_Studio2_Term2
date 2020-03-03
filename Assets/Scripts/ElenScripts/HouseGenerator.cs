@@ -10,7 +10,9 @@ using UnityEditor;
 
 public class HouseGenerator : MonoBehaviour
 {
+    //The parent object who stores all the Meshes of the house
     public Transform RoomParent;
+
     //The final meshes to be visualized(the house representation)
     List<Mesh> FinalMeshes = new List<Mesh>();
 
@@ -25,28 +27,37 @@ public class HouseGenerator : MonoBehaviour
     //Initialize Strings
     string Rule = "";
     string HouseProg = "";
-    string first = " ";
+
 
     //Call the house class
     House myHouse;
+
+    //Call the Population class
     Population TestPopulation;
 
-     
-    
+    //time for prefabs
+    public GameObject k;
+    public GameObject b;
+    public GameObject l;
+    public GameObject s;
+    public GameObject o;
+    public GameObject w;
+
     // Start is called before the first frame update
     void Start()
     {
+        
         myHouse = new House(Rule);
         myHouse.CreateRooms();
-        myHouse.GetFinalRooms();
+       myHouse.GetFinalRooms();
 
         foreach (Room item in myHouse.GetFinalRooms())
         {
             Mesh rect2 = item.Rec;
             FinalMeshes.Add(rect2);
-        }
+       }
         Panel.SetActive(false);
-        
+
     }
     // Update is called once per frame
     void Update()
@@ -55,6 +66,27 @@ public class HouseGenerator : MonoBehaviour
 
 
     }
+
+    public void MakeRule(string st)
+    {
+        FinalMeshes.Clear();
+        Debug.Log(st+"sto make rule");
+        Rule = st;
+        Debug.Log(Rule + "sto make house");
+        myHouse = new House(Rule);
+        myHouse.CreateRooms();
+        myHouse.GetFinalRooms();
+
+        //For each Room instance get the mesh
+        foreach (Room item in myHouse.GetFinalRooms())
+        {
+            Mesh rect2 = item.Rec;
+            FinalMeshes.Add(rect2);
+        }
+        myOtherText.text = $"{myHouse.GetRoomNum()}" + " Rooms in " + Rule;
+
+    }
+    
 
     //STEP 1
     public void MakeHouse()
@@ -88,7 +120,7 @@ public class HouseGenerator : MonoBehaviour
     //STEP 2
     public void DrawHouse()
     {
-        //kill 'em all
+        //kill 'em all(so you don't have houses created on the to of each other)
         for (int j = 0; j < RoomParent.childCount; j++)
         {
             Destroy(RoomParent.GetChild(j).gameObject);
@@ -116,22 +148,22 @@ public class HouseGenerator : MonoBehaviour
         TestPopulation.WriteNextGeneration();
         for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
         {
-            WriteString(TestPopulation.GenomesList[i]);
+           // WriteString(TestPopulation.GenomesList[i]);
         }
 
         for (int k = 0; k < 10; k++)
         {
-            WriteString(k.ToString());
+           // WriteString(k.ToString());
             TestPopulation.NextGeneration();
             TestPopulation.WriteNextGeneration();
             for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
             {
-                WriteString(TestPopulation.GenomesList[i]);
+               // WriteString(TestPopulation.GenomesList[i]);
             }
         }
 
-        
-        myText.text = first;
+       //here should be the very best individual(it's not) 
+        myText.text = TestPopulation.GenomesList[0];
         
 
     }
@@ -139,12 +171,33 @@ public class HouseGenerator : MonoBehaviour
     //STEP 4
     public void DrawLabels()
     {
+        List<char> myfinallabels = TestPopulation.OnlyG[0].ToList();
+        Debug.Log(TestPopulation.OnlyG[0]);
 
         for (int j = 0; j < RoomParent.childCount; j++)
         {
             Vector3 pos = RoomParent.GetChild(j).GetComponent<MeshRenderer>().bounds.center;
-            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+             GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
             obj.transform.position = pos;
+            Vector3 up = new Vector3(0, 0.5f, 0);
+            switch (myfinallabels[j])
+            {
+               // case 'k':
+                    //Instantiate(k, pos + up, Quaternion.identity);break;
+                //case 'l':
+                   // Instantiate(l, pos+ up, Quaternion.identity); break;
+                //case 'o':
+                   // Instantiate(o, pos + up, Quaternion.identity); break;
+                //case 'w':
+                   // Instantiate(w, pos + up, Quaternion.identity); break;
+               // case 'b':
+                   // Instantiate(b, pos + up, Quaternion.identity); break;
+               // case 's':
+                   // Instantiate(s, pos + up, Quaternion.identity); break;
+
+
+            }
+            
         }
     }
 
