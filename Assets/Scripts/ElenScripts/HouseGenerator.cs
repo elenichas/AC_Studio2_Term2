@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine.UI;
 using TMPro;
+using System.IO;
+using UnityEditor;
 
 public class HouseGenerator : MonoBehaviour
 {
@@ -29,7 +31,7 @@ public class HouseGenerator : MonoBehaviour
     House myHouse;
     Population TestPopulation;
 
-    List<string> GenomesListOut = new List<string>();
+     
     
     // Start is called before the first frame update
     void Start()
@@ -110,27 +112,28 @@ public class HouseGenerator : MonoBehaviour
     public void RunGa()
     {
         // //Run the GA
-        TestPopulation = new Population(HouseProg.Length, HouseProg, FinalMeshes, GenomesListOut);
+        TestPopulation = new Population(HouseProg.Length, HouseProg, FinalMeshes);
         TestPopulation.WriteNextGeneration();
-    
-          for (int k = 0; k < 10; k++)
-          {
+        for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
+        {
+            WriteString(TestPopulation.GenomesList[i]);
+        }
 
+        for (int k = 0; k < 10; k++)
+        {
+            WriteString(k.ToString());
             TestPopulation.NextGeneration();
             TestPopulation.WriteNextGeneration();
-          }
-
-        //output the best individual after 100 generations(??)
-        // first = GenomeFitnessPairs.OrderBy(kvp => kvp.Value).First().ToString();
-        first = GenomesListOut[0];
-        myText.text = first;
-        for (int i = 0; i < GenomesListOut.Count; i++)
-        {
-            Debug.Log(GenomesListOut[i]);
+            for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
+            {
+                WriteString(TestPopulation.GenomesList[i]);
+            }
         }
-            
-        //check if the last is actually worse than the first I am getting
-        //Debug.Log(GenomeFitnessPairs.OrderBy(kvp => kvp.Value).Last().ToString());
+
+        
+        myText.text = first;
+        
+
     }
 
     //STEP 4
@@ -178,5 +181,23 @@ public class HouseGenerator : MonoBehaviour
     {
         //check for valid chars in user input
         return Regex.IsMatch(str, @"^[ktblwso]+$");
+    }
+
+
+    [MenuItem("Tools/Write file")]
+    static void WriteString(string g)
+    {
+        string path = "Assets/WriteGens.txt";
+
+        //Write some text to the test.txt file
+        StreamWriter writer = new StreamWriter(path, true);
+        writer.WriteLine(g);
+        writer.Close();
+
+        //Re-import the file to update the reference in the editor
+        AssetDatabase.ImportAsset(path);
+        TextAsset asset = (TextAsset)Resources.Load(path);
+
+
     }
 }

@@ -18,7 +18,7 @@ public abstract class Genome : IComparable
     abstract public bool CanReproduce(float fitness);
     abstract public void SetCrossoverPoint(int crossoverPoint);
     abstract public bool CanDie(float fitness);
-    abstract public void ToDictionary();
+    abstract public string ToMyString();
     abstract public void CopyGeneInfo(Genome g);
     abstract public int CompareTo(object a);
 

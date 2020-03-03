@@ -26,20 +26,21 @@ public class Population
     public int HousePorgramLength;
     public string HouseProg;
     public List<Mesh> FinalMeshes;
+
     public List <string> GenomesList;
 
 
-    public Population(int HousePorgramLength, string HouseProg, List<Mesh> FinalMeshes, List<string> GenomesList)
+    public Population(int HousePorgramLength, string HouseProg, List<Mesh> FinalMeshes)
     {
         this.HousePorgramLength = HousePorgramLength;
         this.HouseProg = HouseProg;
         this.FinalMeshes = FinalMeshes;
-        this.GenomesList = GenomesList;
+       
 
 
         for (int i = 0; i < kInitialPopulation; i++)
         {
-            ListGenome aGenome = new ListGenome(HousePorgramLength, HouseProg, FinalMeshes, GenomesList);
+            ListGenome aGenome = new ListGenome(HousePorgramLength, HouseProg, FinalMeshes);
             aGenome.SetCrossoverPoint(kCrossover);
             aGenome.CalculateFitness();
             Genomes.Add(aGenome);
@@ -155,6 +156,7 @@ public class Population
             GenomeFamily.Add(babyGene2);
             CalculateFitnessForAll(GenomeFamily);
             GenomeFamily.Sort();
+            GenomeFamily.Reverse();
 
             //if (Best2 == true)
             //{
@@ -177,12 +179,14 @@ public class Population
 
     public void WriteNextGeneration()
     {
-         // Debug.Log(Generation);
-         // Debug.Log(CurrentPopulation);
+        // Debug.Log(Generation);
+        // Debug.Log(CurrentPopulation);
+        GenomesList = new List<string>();
           for (int i = 0; i < CurrentPopulation; i++)
           {
-                ((Genome)Genomes[i]).ToDictionary();
-          }      
+            GenomesList.Add(((Genome)Genomes[i]).ToMyString());
+          }
+        
 
     }
 }

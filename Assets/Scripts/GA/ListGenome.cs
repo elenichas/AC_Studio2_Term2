@@ -31,9 +31,9 @@ public class ListGenome : Genome
         ListGenome Gene1 = this;
         ListGenome Gene2 = (ListGenome)a;
         if (Gene1.CurrentFitness > Gene2.CurrentFitness)
-            return -1;
-        else if (Gene1.CurrentFitness < Gene2.CurrentFitness)
             return 1;
+        else if (Gene1.CurrentFitness < Gene2.CurrentFitness)
+            return -1;
         else
             return 0;
     }
@@ -50,13 +50,13 @@ public class ListGenome : Genome
     }
 
 
-    public ListGenome(int HouseProgramLength, string HouseProg, List<Mesh> FinalMeshes, List<string> GenomeFitnessPairs)
+    public ListGenome(int HouseProgramLength, string HouseProg, List<Mesh> FinalMeshes)
     {
          
         Lengthother = HouseProgramLength;
         this.HouseProg = HouseProg;
         this.FinalMeshes = FinalMeshes;
-        this.GenomeFitnessPairs = GenomeFitnessPairs;
+        
         letters = HouseProg.ToList();
 
         for (int i = 0; i < Lengthother; i++)
@@ -199,7 +199,7 @@ public class ListGenome : Genome
         return CurrentFitness;
     }
 
-    public override void ToDictionary()
+    public override string ToMyString()
     {
         string strResult = "";
         for (int i = 0; i < Lengthother; i++)
@@ -207,8 +207,9 @@ public class ListGenome : Genome
             strResult = strResult + (TheArray[i]).ToString();
         }
 
-        //if (!GenomeFitnessPairs.ContainsKey(strResult))
-            GenomeFitnessPairs.Add(strResult);
+        strResult += " " + CurrentFitness;
+        return strResult;
+            
     }
 
     public override void CopyGeneInfo(Genome dest)
@@ -216,19 +217,11 @@ public class ListGenome : Genome
         ((ListGenome)dest).FinalMeshes = this.FinalMeshes;
         ((ListGenome)dest).CrossoverPoint = this.CrossoverPoint;
         ((ListGenome)dest).CurrentFitness = this.CurrentFitness;
-        ((ListGenome)dest).GenomeFitnessPairs = this.GenomeFitnessPairs;
         ((ListGenome)dest).HouseProg = this.HouseProg;
         ((ListGenome)dest).Lengthother = this.Lengthother;
         ((ListGenome)dest).letters = this.letters;
         ((ListGenome)dest).MutationIndex = this.MutationIndex;
         ((ListGenome)dest).TheArray = this.TheArray;
-
-
-
-
-
-
-
 
     }
 
