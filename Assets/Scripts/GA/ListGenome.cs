@@ -104,6 +104,7 @@ public class ListGenome : Genome
 
     }
 
+    //ORDERED CHANGING MUTATION
     public override void Mutate()
     {
         var GeneToMutate = UnityEngine.Random.Range(0, HouseProg.Length);
@@ -243,16 +244,10 @@ public class ListGenome : Genome
         return CurrentFitness;
     }
 
-    public override string ToMyString()
+    public override int ToMyStringOnlyF()
     {
-        string strResult = "";
-        for (int i = 0; i < Lengthother; i++)
-        {
-            strResult = strResult + (TheArray[i]).ToString();
-        }
-
-        strResult += " " + (int)CurrentFitness;
-        return strResult;
+        
+        return (int)CurrentFitness;
             
     }
     public override string ToMyStringOnlyG()
@@ -263,7 +258,6 @@ public class ListGenome : Genome
             strResult = strResult + (TheArray[i]).ToString();
         }
 
-       
         return strResult;
 
     }
@@ -317,6 +311,41 @@ public class ListGenome : Genome
 
         return CrossingGene;
     }
+
+
+    public override Genome OrderedCrossover(Genome g)
+    {
+
+        ListGenome CrossingGene = new ListGenome();
+         
+
+        g.CopyGeneInfo(CrossingGene);
+
+        var crossOverPt = (int)TheArray.Count / 2;
+       
+        //take half of genes from the existing parent
+        for (int i = 0; i < crossOverPt; i++)
+        {          
+            CrossingGene.TheArray[i] = this.TheArray[i];                
+        }
+
+        //take the other half from the parent g passed as a parameter
+        //if the letter doesn't exist add it with the order it exist to parent g
+        for (int i = crossOverPt; i< TheArray.Count; i++)
+        {
+            for (int j = 0; j < ((ListGenome)g).TheArray.Count; j++)
+            {
+                
+                if (!(CrossingGene.TheArray.Contains(((ListGenome)g).TheArray[j])))
+                    CrossingGene.TheArray[i] = ((ListGenome)g).TheArray[j];
+                 
+            }
+
+        }
+
+        return CrossingGene;
+    }
+
 
 }
 

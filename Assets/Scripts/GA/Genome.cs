@@ -13,12 +13,13 @@ public abstract class Genome : IComparable
     abstract public void Initialize();
     abstract public void Mutate( );
     abstract public Genome Crossover(Genome g);
+    abstract public Genome OrderedCrossover(Genome g);
     abstract public char GenerateGeneValue( );
     abstract public double CalculateFitness();
     abstract public bool CanReproduce(float fitness);
     abstract public void SetCrossoverPoint(int crossoverPoint);
     abstract public bool CanDie(float fitness);
-    abstract public string ToMyString();
+    abstract public int ToMyStringOnlyF();
     abstract public string ToMyStringOnlyG();
     abstract public void CopyGeneInfo(Genome g);
     abstract public int CompareTo(object a);

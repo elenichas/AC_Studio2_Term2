@@ -1195,12 +1195,12 @@ MonoBehaviour:
   Panel: {fileID: 254228738}
   myText: {fileID: 1994377992}
   myOtherText: {fileID: 2043029230}
-  k: {fileID: -927199367670048503, guid: 23e2c3aa2761ce84ea9dccee6e48354a, type: 3}
-  b: {fileID: -927199367670048503, guid: 5238cdebecc059c4c9a378bd54541707, type: 3}
-  l: {fileID: -927199367670048503, guid: f46426d51d067844dbb78168e9dfddd1, type: 3}
-  s: {fileID: -927199367670048503, guid: 7416de9a2ddb4b048bfe56ec1bd84d90, type: 3}
-  o: {fileID: -927199367670048503, guid: f0c2c47e137741045a82dac59ec99f3d, type: 3}
-  w: {fileID: -927199367670048503, guid: bf361b807def5d54eaac2b6e041dc598, type: 3}
+  k: {fileID: 441904418953927569, guid: 11a6bf8b052afdd4e83e11ecfdc2ff26, type: 3}
+  b: {fileID: 5630887833316353568, guid: 0d7d5a140ad55584d813536d03fd7491, type: 3}
+  l: {fileID: 8823556818246900488, guid: 36d6057099b697f479b9f69a69cd055f, type: 3}
+  s: {fileID: 3119102046324923157, guid: 02ec990e58dbcb94bb1f1bcd11b548dc, type: 3}
+  o: {fileID: 718556768172062276, guid: 2ea160cc5781959448469af30a11f322, type: 3}
+  w: {fileID: 4129772645630210338, guid: 813273f1fae84884ba3da185c58def7b, type: 3}
 --- !u!4 &934078669
 Transform:
   m_ObjectHideFlags: 0

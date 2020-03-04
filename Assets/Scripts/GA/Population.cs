@@ -9,7 +9,7 @@ public class Population
     const int kInitialPopulation = 50;
    // const int kPopulationLimit = 50;
 
-    const float kMutationFrequency = 0.05f;
+    const float kMutationFrequency = 0.1f;
     //const float kDeathFitness = 0.0f;
    // const float kReproductionFitness = 30.0f;
 
@@ -28,7 +28,7 @@ public class Population
     public List<Mesh> FinalMeshes;
 
     public List <string> GenomesList;
-    public List<string> OnlyG;
+    public List<int> OnlyF;
 
 
     public Population(int HousePorgramLength, string HouseProg, List<Mesh> FinalMeshes)
@@ -130,6 +130,7 @@ public class Population
         }
       }
 
+    //MY CROSSOVER SHOULD BE 
     public void DoCrossover(ArrayList genes)
     {
         Debug.Log("genes coming in crossover " + genes.Count);
@@ -149,10 +150,12 @@ public class Population
         for (int i = 0; i < GeneDads.Count; i++)
         {
             // pick best 2 from parent and children
-            ListGenome babyGene1 = (ListGenome)((ListGenome)GeneDads[i]).Crossover((ListGenome)GeneMoms[i]);
-            ListGenome babyGene2 = (ListGenome)((ListGenome)GeneMoms[i]).Crossover((ListGenome)GeneDads[i]);
+            ListGenome babyGene1 = (ListGenome)((ListGenome)GeneDads[i]).OrderedCrossover((ListGenome)GeneMoms[i]);
+            ListGenome babyGene2 = (ListGenome)((ListGenome)GeneMoms[i]).OrderedCrossover((ListGenome)GeneDads[i]);
+           // ListGenome babyGene1 = (ListGenome)((ListGenome)GeneDads[i]).Crossover((ListGenome)GeneMoms[i]);
+           // ListGenome babyGene2 = (ListGenome)((ListGenome)GeneMoms[i]).Crossover((ListGenome)GeneDads[i]);
 
-        GenomeFamily.Clear();
+            GenomeFamily.Clear();
 
             GenomeFamily.Add(GeneDads[i]);
             GenomeFamily.Add(GeneMoms[i]);
@@ -169,7 +172,7 @@ public class Population
             //{
                 // if Best2 is true, add top fitness genes
                 GenomeResults.Add(GenomeFamily[0]);
-               // GenomeResults.Add(GenomeFamily[1]);
+                //GenomeResults.Add(GenomeFamily[1]);
 
             //}
             //else
@@ -178,6 +181,7 @@ public class Population
             //    //GenomeResults.Add(babyGene2);
             //}
         }
+      
 
 
         Debug.Log("debug from inside crossover" + GenomeResults.Count);
@@ -189,13 +193,20 @@ public class Population
         // Debug.Log(Generation);
         // Debug.Log(CurrentPopulation);
         GenomesList = new List<string>();
-        OnlyG = new List<string>();
+        OnlyF = new List<int>();
+
         for (int i = 0; i < CurrentPopulation; i++)
         {
-            GenomesList.Add(((Genome)Genomes[i]).ToMyString());
-            OnlyG.Add(((Genome)Genomes[i]).ToMyStringOnlyG());
+            //Have the genomes to a list
+            GenomesList.Add(((Genome)Genomes[i]).ToMyStringOnlyG());
+
+            //Have their fitnesses to another
+            OnlyF.Add(((Genome)Genomes[i]).ToMyStringOnlyF());
         }
-        
+        GenomesList.Sort();
+        //GenomesList.Reverse();
+        OnlyF.Sort();
+       // OnlyF.Reverse();
 
      }
 }

@@ -148,22 +148,23 @@ public class HouseGenerator : MonoBehaviour
         TestPopulation.WriteNextGeneration();
         for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
         {
-           // WriteString(TestPopulation.GenomesList[i]);
+            WriteString(TestPopulation.GenomesList[i] + " " + TestPopulation.OnlyF[i]);
         }
 
-        for (int k = 0; k < 7; k++)
+        for (int k = 0; k < 10; k++)
         {
-           // WriteString(k.ToString());
+            WriteString(k.ToString());
             TestPopulation.NextGeneration();
             TestPopulation.WriteNextGeneration();
             for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
             {
-               // WriteString(TestPopulation.GenomesList[i]);
+                WriteString(TestPopulation.GenomesList[i]+" "+TestPopulation.OnlyF[i]);
             }
         }
 
-       //here should be the very best individual(it's not) 
-        myText.text = TestPopulation.GenomesList[0];
+        //here should be the very best individual(it's not) 
+        
+        myText.text = TestPopulation.GenomesList[0]+" "+ TestPopulation.OnlyF[0];
         
 
     }
@@ -171,19 +172,20 @@ public class HouseGenerator : MonoBehaviour
     //STEP 4
     public void DrawLabels()
     {
-        List<char> myfinallabels = TestPopulation.OnlyG[0].ToList();
-        Debug.Log(TestPopulation.OnlyG[0]);
+        List<char> myfinallabels = TestPopulation.GenomesList[0].ToList();
+        Debug.Log(TestPopulation.OnlyF[0]);
 
         for (int j = 0; j < RoomParent.childCount; j++)
         {
             Vector3 pos = RoomParent.GetChild(j).GetComponent<MeshRenderer>().bounds.center;
-             GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            obj.transform.position = pos;
-            Vector3 up = new Vector3(0, 0.5f, 0);
+             //GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            //obj.transform.position = pos;
+            Vector3 up = new Vector3(0, 0.2f, 0);
             switch (myfinallabels[j])
             {
                case 'k':
                     Instantiate(k, pos + up, Quaternion.identity);break;
+                     
                 case 'l':
                     Instantiate(l, pos+ up, Quaternion.identity); break;
                 case 'o':
@@ -248,8 +250,8 @@ public class HouseGenerator : MonoBehaviour
         writer.Close();
 
         //Re-import the file to update the reference in the editor
-        AssetDatabase.ImportAsset(path);
-        TextAsset asset = (TextAsset)Resources.Load(path);
+       // AssetDatabase.ImportAsset(path);
+       // TextAsset asset = (TextAsset)Resources.Load(path);
 
 
     }
