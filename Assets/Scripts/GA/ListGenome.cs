@@ -117,83 +117,127 @@ public class ListGenome : Genome
 
     }
 
-    private float MeshArea(Mesh mesh)
+    private double MeshArea(Mesh mesh)
     {
-        float Area = mesh.bounds.size.x * mesh.bounds.size.z;
+       double Area = mesh.bounds.size.x * mesh.bounds.size.z;
 
         return Area;
 
     }
 
-
-    private float CalculateHouseFitnessSum()
+    public double DoTheMaths(double x,double z,double minsize,double maxsize,double area,double prop,double area_this)
     {
-        float total_fitness = 0;
-        //Debug.Log("number of meshes  " + FinalMeshes.Count + "  number of letters" + TheArray.Count);
+        double f = 0;
+        if (x < z)
+        {
+            f += Math.Pow(minsize - x, 2);
+            f += Math.Pow(maxsize - z, 2);
+            f += Math.Pow(prop - x / z, 2);
+        }
+        else
+        {
+            f += Math.Pow(minsize - z, 2);
+            f += Math.Pow(maxsize - x, 2);
+            f += Math.Pow(prop - z / x, 2);
+        }
+          f += Math.Pow(area - area_this, 2);
+
+        return f;
+    }
+
+    private double CalculateHouseFitnessSum()
+    {
+        double total_fitness = 0;
+        
         for (int i = 0; i < TheArray.Count; i++)
         {
             switch (TheArray[i])
             {
                 //kitchen
                 case 'k':
+                   
+                   double kminsize = 2.81;
+                   double kmaxsize = 3.42;
+                   double karea = 9.68;
+                   double kprop = 0.93;
+                   double kx = FinalMeshes[i].bounds.size.x;
+                   double kz = FinalMeshes[i].bounds.size.z;
+                   double karea_this = MeshArea(FinalMeshes[i]);
 
-                    float idealK = 30;
-                    float areak = MeshArea(FinalMeshes[i]);
-                    float rfk = Math.Abs(idealK - areak);
-                    total_fitness += rfk;
+                   total_fitness += DoTheMaths( kx, kz,kminsize,kmaxsize, karea,kprop, karea_this);                
                     break;
 
                 //living room
                 case 'l':
+                    double lminsize = 4.19;
+                    double lmaxsize = 5.83;
+                    double larea = 24.37;
+                    double lprop = 0.83;
+                    double lx = FinalMeshes[i].bounds.size.x;
+                    double lz = FinalMeshes[i].bounds.size.z;
+                    double larea_this = MeshArea(FinalMeshes[i]);
 
-                    float idealL = 25;
-                    float areal = MeshArea(FinalMeshes[i]);
-                    float rfl = Math.Abs(idealL - areal);
-                    total_fitness += rfl;
+                    total_fitness += DoTheMaths(lx, lz,lminsize, lmaxsize, larea, lprop, larea_this);
                     break;
 
                 //bedroom
                 case 'b':
+                    double bminsize = 3.83;
+                    double bmaxsize = 4.86;
+                    double barea = 18.7;
+                    double bprop = 0.86;
+                    double bx = FinalMeshes[i].bounds.size.x;
+                    double bz = FinalMeshes[i].bounds.size.z;
+                    double barea_this = MeshArea(FinalMeshes[i]);
 
-                    float idealB = 20;
-                    float areab = MeshArea(FinalMeshes[i]);
-                    float rfb = Math.Abs(idealB - areab);
-                    total_fitness += rfb;
+                    total_fitness += DoTheMaths(bx, bz, bminsize, bmaxsize, barea, bprop, barea_this);
                     break;
 
                 //bathroom wc
                 case 'w':
+                    double wminsize = 1.62;
+                    double wmaxsize = 2.77;
+                    double warea = 4.46;
+                    double wprop = 0.86;
+                    double wx = FinalMeshes[i].bounds.size.x;
+                    double wz = FinalMeshes[i].bounds.size.z;
+                    double warea_this = MeshArea(FinalMeshes[i]);
 
-                    float idealW = 4;
-                    float areaw = MeshArea(FinalMeshes[i]);
-                    float rfw = Math.Abs(idealW - areaw);
-                    total_fitness += rfw;
-                    break;
+                    total_fitness += DoTheMaths(wx, wz, wminsize, wmaxsize, warea, wprop, warea_this);
+                    break;                  
 
                 //office-workspace
                 case 'o':
+                    double ominsize = 3.42;
+                    double omaxsize = 4.07;
+                    double oarea = 13.95;
+                    double oprop = 0.9;
+                    double ox = FinalMeshes[i].bounds.size.x;
+                    double oz = FinalMeshes[i].bounds.size.z;
+                    double oarea_this = MeshArea(FinalMeshes[i]);
 
-                    float idealO = 10;
-                    float areao = MeshArea(FinalMeshes[i]);
-                    float rfo = Math.Abs(idealO - areao);
-                    total_fitness += rfo;
+                    total_fitness += DoTheMaths(ox, oz, ominsize, omaxsize, oarea, oprop, oarea_this);
+
                     break;
-
-
                 //storage
                 case 's':
+                    double sminsize =0.6;
+                    double smaxsize = 3.09;
+                    double sarea = 1.85;
+                    double sprop = 0.86;
+                    double sx = FinalMeshes[i].bounds.size.x;
+                    double sz = FinalMeshes[i].bounds.size.z;
+                    double sarea_this = MeshArea(FinalMeshes[i]);
 
-                    float idealS = 2.5f;
-                    float areas = MeshArea(FinalMeshes[i]);
-                    float rfs = Math.Abs(idealS - areas);
-                    total_fitness += rfs;
+                    total_fitness += DoTheMaths(sx, sz, sminsize, smaxsize, sarea, sprop, sarea_this);
+
                     break;
             }
         }
         return total_fitness;
     }
 
-    public override float CalculateFitness()
+    public override double CalculateFitness()
     {
         CurrentFitness = CalculateHouseFitnessSum();
         return CurrentFitness;
@@ -207,7 +251,7 @@ public class ListGenome : Genome
             strResult = strResult + (TheArray[i]).ToString();
         }
 
-        strResult += " " + CurrentFitness;
+        strResult += " " + (int)CurrentFitness;
         return strResult;
             
     }
@@ -242,7 +286,8 @@ public class ListGenome : Genome
 
         ListGenome CrossingGene = new ListGenome();
 
-        CopyGeneInfo(CrossingGene);
+        g.CopyGeneInfo(CrossingGene);
+
         var crossOverPt = (int)TheArray.Count / 2;
         var coin = ListGenome.TheSeed.NextDouble();
         for (int i = 0; i < crossOverPt; i++)

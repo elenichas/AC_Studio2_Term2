@@ -148,17 +148,17 @@ public class HouseGenerator : MonoBehaviour
         TestPopulation.WriteNextGeneration();
         for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
         {
-           // WriteString(TestPopulation.GenomesList[i]);
+            WriteString(TestPopulation.GenomesList[i]);
         }
 
-        for (int k = 0; k < 10; k++)
+        for (int k = 0; k < 7; k++)
         {
-           // WriteString(k.ToString());
+            WriteString(k.ToString());
             TestPopulation.NextGeneration();
             TestPopulation.WriteNextGeneration();
             for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
             {
-               // WriteString(TestPopulation.GenomesList[i]);
+                WriteString(TestPopulation.GenomesList[i]);
             }
         }
 
@@ -180,8 +180,8 @@ public class HouseGenerator : MonoBehaviour
              GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
             obj.transform.position = pos;
             Vector3 up = new Vector3(0, 0.5f, 0);
-            switch (myfinallabels[j])
-            {
+           // switch (myfinallabels[j])
+            //{
                // case 'k':
                     //Instantiate(k, pos + up, Quaternion.identity);break;
                 //case 'l':
@@ -196,7 +196,7 @@ public class HouseGenerator : MonoBehaviour
                    // Instantiate(s, pos + up, Quaternion.identity); break;
 
 
-            }
+           // }
             
         }
     }
