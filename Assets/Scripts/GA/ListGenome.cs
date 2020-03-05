@@ -104,7 +104,7 @@ public class ListGenome : Genome
 
     }
 
-    //ORDERED CHANGING MUTATION
+    //ORDERED CHANGING MUTATION(just take 2 random and flip them)
     public override void Mutate()
     {
         var GeneToMutate = UnityEngine.Random.Range(0, HouseProg.Length);
@@ -271,10 +271,11 @@ public class ListGenome : Genome
         ((ListGenome)dest).Lengthother = this.Lengthother;
         ((ListGenome)dest).letters = this.letters;
         ((ListGenome)dest).MutationIndex = this.MutationIndex;
-        ((ListGenome)dest).TheArray = this.TheArray;
+        //((ListGenome)dest).TheArray = this.TheArray;
 
     }
 
+    //THE CROSSOVER THE ORIGINAL ALGORITHM HAD (NOOOP)
     public override Genome Crossover(Genome g)
     { 
 
@@ -312,7 +313,7 @@ public class ListGenome : Genome
         return CrossingGene;
     }
 
-
+    //MY SUPER DUPER AMAZING ORDERED CROSSOVER NO PUBLICATES GUARANTEE
     public override Genome OrderedCrossover(Genome g)
     {
 
@@ -326,7 +327,7 @@ public class ListGenome : Genome
         //take half of genes from the existing parent
         for (int i = 0; i < crossOverPt; i++)
         {          
-            CrossingGene.TheArray[i] = this.TheArray[i];                
+            CrossingGene.TheArray.Add (this.TheArray[i]);                
         }
 
         //take the other half from the parent g passed as a parameter
@@ -337,7 +338,7 @@ public class ListGenome : Genome
             {
                 
                 if (!(CrossingGene.TheArray.Contains(((ListGenome)g).TheArray[j])))
-                    CrossingGene.TheArray[i] = ((ListGenome)g).TheArray[j];
+                    CrossingGene.TheArray.Add(((ListGenome)g).TheArray[j]);
                  
             }
 

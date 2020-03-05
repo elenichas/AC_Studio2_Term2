@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Population
 {
-    const int kCrossover = 3;
+   // const int kCrossover =  ;
     const int kInitialPopulation = 50;
    // const int kPopulationLimit = 50;
 
@@ -42,7 +42,7 @@ public class Population
         for (int i = 0; i < kInitialPopulation; i++)
         {
             ListGenome aGenome = new ListGenome(HousePorgramLength, HouseProg, FinalMeshes);
-            aGenome.SetCrossoverPoint(kCrossover);
+            aGenome.SetCrossoverPoint( (int)HousePorgramLength/2) ;
             aGenome.CalculateFitness();
             Genomes.Add(aGenome);
           
@@ -130,7 +130,7 @@ public class Population
         }
       }
 
-    //MY CROSSOVER SHOULD BE 
+    
     public void DoCrossover(ArrayList genes)
     {
         Debug.Log("genes coming in crossover " + genes.Count);
