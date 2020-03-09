@@ -12,6 +12,7 @@ public class HouseGenerator : MonoBehaviour
 {
     //The parent object who stores all the Meshes of the house
     public Transform RoomParent;
+     
 
     //The final meshes to be visualized(the house representation)
     List<Mesh> FinalMeshes = new List<Mesh>();
@@ -23,11 +24,13 @@ public class HouseGenerator : MonoBehaviour
     public GameObject Panel;
     public Text myText;
     public Text myOtherText;
+    public Slider mSlider;
 
     //Initialize Strings
     string Rule = "";
     string HouseProg = "";
-
+    int num ;
+     
 
     //Call the house class
     House myHouse;
@@ -43,13 +46,16 @@ public class HouseGenerator : MonoBehaviour
     public GameObject o;
     public GameObject w;
 
+    //room prefabs lets try
+    public GameObject room;
+
     // Start is called before the first frame update
     void Start()
     {
-        
-        myHouse = new House(Rule);
+        Debug.Log(num.ToString());
+        myHouse = new House(Rule,num);
         myHouse.CreateRooms();
-       myHouse.GetFinalRooms();
+        myHouse.GetFinalRooms();
 
         foreach (Room item in myHouse.GetFinalRooms())
         {
@@ -62,9 +68,16 @@ public class HouseGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+         
+          
+         
 
+    }
+    public void AssignNum()
+    {
 
-
+        num = (int) mSlider.value;
+        Debug.Log(num.ToString());
     }
 
     public void MakeRule(string st)
@@ -73,7 +86,7 @@ public class HouseGenerator : MonoBehaviour
         Debug.Log(st+"sto make rule");
         Rule = st;
         Debug.Log(Rule + "sto make house");
-        myHouse = new House(Rule);
+        myHouse = new House(Rule,num);
         myHouse.CreateRooms();
         myHouse.GetFinalRooms();
 
@@ -124,7 +137,11 @@ public class HouseGenerator : MonoBehaviour
         for (int j = 0; j < RoomParent.childCount; j++)
         {
             Destroy(RoomParent.GetChild(j).gameObject);
+            // DestroyImmediate(room,true);
+           
+
         }
+        Destroy(GameObject.Find(room + " (Clone)"));
 
         //For each Room you made in Run() draw the mesh
         for (int i = 0; i < myHouse.GetFinalRooms().Count; i++)
@@ -136,6 +153,20 @@ public class HouseGenerator : MonoBehaviour
 
             //put all the gameobjects to a parent object
             gameob.transform.SetParent(RoomParent);
+       
+            
+            Vector3 corn = RoomParent.GetChild(i).GetComponent<MeshRenderer>().bounds.max;
+            float xsize = RoomParent.GetChild(i).GetComponent<MeshFilter>().mesh.bounds.size.x;
+            float zsize = RoomParent.GetChild(i).GetComponent<MeshFilter>().mesh.bounds.size.z;
+           
+
+
+            Vector3 up = new Vector3(0, 0.1f, 0);
+            room.transform.localScale = new Vector3(xsize-0.01f*xsize, 2, zsize-0.01f*zsize);
+            Instantiate(room, corn + up, Quaternion.identity);
+            room.GetComponent<MeshRenderer>().material = myMaterials[i];
+            
+             
         }
     }
 
@@ -180,7 +211,7 @@ public class HouseGenerator : MonoBehaviour
             Vector3 pos = RoomParent.GetChild(j).GetComponent<MeshRenderer>().bounds.center;
              //GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
             //obj.transform.position = pos;
-            Vector3 up = new Vector3(0, 0.2f, 0);
+            Vector3 up = new Vector3(0, 2.0f, 0);
             switch (myfinallabels[j])
             {
                case 'k':
@@ -219,7 +250,7 @@ public class HouseGenerator : MonoBehaviour
         // Create the House Class Instance  
         RandomRuleGen R = new RandomRuleGen(length);
         Rule = R.MakeRule();
-        myHouse = new House(Rule);
+        myHouse = new House(Rule,num);
         myHouse.CreateRooms();
         myHouse.GetFinalRooms();
 

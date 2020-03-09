@@ -12,7 +12,7 @@ public class House
 
        public List<List<Room>> Rooms;
      
-    public House(string Rule)
+    public House(string Rule,int num)
     {     
         //The list of lists that hold all the Rooms created in each step
         //not all to be visualized
@@ -23,9 +23,9 @@ public class House
         Vector3[] verticesp = new Vector3[4];
 
         verticesp[0] = new Vector3(0, 0, 0);
-        verticesp[1] = new Vector3(0, 0, 10);
-        verticesp[2] = new Vector3(12, 0, 10);
-        verticesp[3] = new Vector3(12, 0,0);
+        verticesp[1] = new Vector3(0, 0, num);
+        verticesp[2] = new Vector3(num, 0, num);
+        verticesp[3] = new Vector3(num, 0,0);
 
         parentrec.vertices = verticesp;
         parentrec.triangles = new int[] { 0, 3, 2, 0, 2, 1 };
@@ -99,11 +99,11 @@ public class House
                                 next.AddRange(RuleG(currentRoom)); break;
 
                             //Dissect in shortest side(1/3 - 2/3) next rule applies to both Room.
-                           // case 'H':
+                            case 'H':
                               //  next.AddRange(RuleH(currentRoom)); break;
 
                             //Dissect in shortest side(2/3 - 1/3) next rule applies to both Room.
-                           // case 'I':
+                            case 'I':
                                // next.AddRange(RuleI(currentRoom)); break;
 
                             //Dissect in shortest side(1/2 - 1/2) next rule applies to first Room.
@@ -115,8 +115,8 @@ public class House
                                 next.AddRange(RuleK(currentRoom)); break;
 
                             //Dissect in shortest side(1/2- 1/2)  next rule applies to second Room.
-                            //case 'L':
-                               // next.AddRange(RuleL(currentRoom)); break;
+                             case 'L':
+                                next.AddRange(RuleL(currentRoom)); break;
                         }
                     }
                 }
