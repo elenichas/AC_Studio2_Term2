@@ -4,20 +4,30 @@ using UnityEngine;
 
 public class RandomRuleGen 
 {
-    string AllRules;
+    string AllRulesL;
+    string AllRulesS;
     char[] HouseRule;
 
     public RandomRuleGen ( int length)
     {
-        AllRules = "ABCDEFGHIJKL";
+        AllRulesL = "ABCDEF";
+        AllRulesS = "GHIJKL";
         HouseRule = new char[length];
     }
-     
-      public string MakeRule()
+
+    //the Rule is created alternatively from rules tha disect the longest and 
+    //then the shortest side to create more accurate results
+    //it also always start with disecting the longest side for the same reason
+
+    public string MakeRule()
       {      
-        for (int i = 0; i < HouseRule.Length; i++)
+        for (int i = 0; i < HouseRule.Length; i += 2)
         {
-            HouseRule[i] = AllRules[Random.Range(0,AllRules.Length)];
+            HouseRule[i] = AllRulesL[Random.Range(0,AllRulesL.Length)];
+        }
+        for (int i = 1; i < HouseRule.Length; i += 2)
+        {
+            HouseRule[i] = AllRulesS[Random.Range(0, AllRulesL.Length)];
         }
         string RandRule = new string(HouseRule);
         return RandRule;

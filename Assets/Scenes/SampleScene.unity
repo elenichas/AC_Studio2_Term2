@@ -229,54 +229,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 948f4100a11a5c24981795d21301da5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  volumeTrigger: {fileID: 282840814}
-  volumeLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  stopNaNPropagation: 1
-  finalBlitToCameraTarget: 1
-  antialiasingMode: 1
-  temporalAntialiasing:
-    jitterSpread: 0.75
-    sharpness: 0.25
-    stationaryBlending: 0.95
-    motionBlending: 0.85
-  subpixelMorphologicalAntialiasing:
-    quality: 2
-  fastApproximateAntialiasing:
-    fastMode: 0
-    keepAlpha: 0
-  fog:
-    enabled: 1
-    excludeSkybox: 1
-  debugLayer:
-    lightMeter:
-      width: 512
-      height: 256
-      showCurves: 1
-    histogram:
-      width: 512
-      height: 256
-      channel: 3
-    waveform:
-      exposure: 0.12
-      height: 256
-    vectorscope:
-      size: 256
-      exposure: 0.12
-    overlaySettings:
-      linearDepth: 0
-      motionColorIntensity: 4
-      motionGridSize: 64
-      colorBlindnessType: 0
-      colorBlindnessStrength: 1
-  m_Resources: {fileID: 11400000, guid: d82512f9c8e5d4a4d938b575d47f88d4, type: 2}
-  m_ShowToolkit: 0
-  m_ShowCustomSorter: 0
-  breakBeforeColorGrading: 0
-  m_BeforeTransparentBundles: []
-  m_BeforeStackBundles: []
-  m_AfterStackBundles: []
 --- !u!1 &1162972127
 GameObject:
   m_ObjectHideFlags: 0
@@ -368,6 +320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab44c398ba398d84e912574ebd806497, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RoomParent: {fileID: 0}
   myMaterials:
   - {fileID: 2100000, guid: 35f08441169d1fc4280f943f4cd0f886, type: 2}
   - {fileID: 2100000, guid: 9d950174d66764e4bb73326fc2e85760, type: 2}
@@ -389,16 +342,15 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 6dd9fdefce1fc384fa0d78ae36f2a9d8, type: 2}
   - {fileID: 2100000, guid: c19f633a955600e449d5b3fc7c768418, type: 2}
   - {fileID: 2100000, guid: b78c1cc9074e14f41b649ef2fe80c7dc, type: 2}
-  _skin: {fileID: 0}
-  RuleRect:
-    serializedVersion: 2
-    x: 26
-    y: 100
-    width: 60
-    height: 60
-  NumRect:
-    serializedVersion: 2
-    x: 100
-    y: 100
-    width: 60
-    height: 60
+  Panel: {fileID: 0}
+  myOtherText: {fileID: 0}
+  mSlider: {fileID: 0}
+  bSlider: {fileID: 0}
+  Pb: {fileID: 0}
+  k: {fileID: 0}
+  b: {fileID: 0}
+  l: {fileID: 0}
+  s: {fileID: 0}
+  o: {fileID: 0}
+  w: {fileID: 0}
+  room: {fileID: 0}

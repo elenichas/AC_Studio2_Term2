@@ -95,7 +95,7 @@ public class ListGenome : Genome
     }
 
 
-    public override char GenerateGeneValue( )
+    public override char GenerateGeneValue()
     {
         char RandRoom = letters[UnityEngine.Random.Range(0, letters.Count)];
         letters.Remove(RandRoom);
@@ -104,11 +104,12 @@ public class ListGenome : Genome
 
     }
 
+
     //ORDERED CHANGING MUTATION(just take 2 random and flip them)
     public override void Mutate()
     {
-        var GeneToMutate = UnityEngine.Random.Range(0, HouseProg.Length);
-        var geneToFlipWith = Enumerable.Range(0, HouseProg.Length)
+        var GeneToMutate = UnityEngine.Random.Range(0, TheArray.Count);
+        var geneToFlipWith = Enumerable.Range(0, TheArray.Count)
             .Except(new List<int> { GeneToMutate }).OrderBy(x => ListGenome.TheSeed.NextDouble()).First();
 
         var g1 = TheArray[GeneToMutate];
@@ -118,12 +119,11 @@ public class ListGenome : Genome
 
     }
 
+
     private double MeshArea(Mesh mesh)
     {
        double Area = mesh.bounds.size.x * mesh.bounds.size.z;
-
         return Area;
-
     }
 
     public double DoTheMaths(double x,double z,double minsize,double maxsize,double area,double prop,double area_this)
@@ -131,17 +131,19 @@ public class ListGenome : Genome
         double f = 0;
         if (x < z)
         {
-            f += Math.Pow(minsize - x, 2);
-            f += Math.Pow(maxsize - z, 2);
-            f += Math.Pow(prop - x / z, 2);
+            f += Math.Abs(minsize - x);
+            f += Math.Abs(maxsize - z);
+            f += Math.Abs(prop - x / z);
         }
         else
         {
-            f += Math.Pow(minsize - z, 2);
-            f += Math.Pow(maxsize - x, 2);
-            f += Math.Pow(prop - z / x, 2);
+            f += Math.Abs(minsize - z);
+            f += Math.Abs(maxsize - x);
+            f += Math.Abs(prop - z / x);
         }
           f += Math.Pow(area - area_this, 2);
+       
+       
 
         return f;
     }
@@ -149,7 +151,13 @@ public class ListGenome : Genome
     private double CalculateHouseFitnessSum()
     {
         double total_fitness = 0;
-        
+        double karea_this = 0;
+        double larea_this = 0;
+        double barea_this = 0;
+        double warea_this = 0;
+        double oarea_this = 0;
+        double sarea_this = 0;
+
         for (int i = 0; i < TheArray.Count; i++)
         {
             switch (TheArray[i])
@@ -163,7 +171,7 @@ public class ListGenome : Genome
                    double kprop = 0.93;
                    double kx = FinalMeshes[i].bounds.size.x;
                    double kz = FinalMeshes[i].bounds.size.z;
-                   double karea_this = MeshArea(FinalMeshes[i]);
+                   karea_this = MeshArea(FinalMeshes[i]);
 
                    total_fitness += DoTheMaths( kx, kz,kminsize,kmaxsize, karea,kprop, karea_this);                
                     break;
@@ -176,9 +184,15 @@ public class ListGenome : Genome
                     double lprop = 0.83;
                     double lx = FinalMeshes[i].bounds.size.x;
                     double lz = FinalMeshes[i].bounds.size.z;
-                    double larea_this = MeshArea(FinalMeshes[i]);
+                    larea_this = MeshArea(FinalMeshes[i]);
 
                     total_fitness += DoTheMaths(lx, lz,lminsize, lmaxsize, larea, lprop, larea_this);
+                    //penalty for too big
+                    if (larea_this > larea)
+                        total_fitness += 500;
+                    //penalty for too small
+                    if (larea_this < larea)
+                        total_fitness += 1500;
                     break;
 
                 //bedroom
@@ -189,7 +203,7 @@ public class ListGenome : Genome
                     double bprop = 0.86;
                     double bx = FinalMeshes[i].bounds.size.x;
                     double bz = FinalMeshes[i].bounds.size.z;
-                    double barea_this = MeshArea(FinalMeshes[i]);
+                    barea_this = MeshArea(FinalMeshes[i]);
 
                     total_fitness += DoTheMaths(bx, bz, bminsize, bmaxsize, barea, bprop, barea_this);
                     break;
@@ -202,9 +216,15 @@ public class ListGenome : Genome
                     double wprop = 0.86;
                     double wx = FinalMeshes[i].bounds.size.x;
                     double wz = FinalMeshes[i].bounds.size.z;
-                    double warea_this = MeshArea(FinalMeshes[i]);
+                     warea_this = MeshArea(FinalMeshes[i]);
 
                     total_fitness += DoTheMaths(wx, wz, wminsize, wmaxsize, warea, wprop, warea_this);
+                    //penalty for too big
+                    if (warea_this >  warea)
+                        total_fitness += 2500;
+                    //penalty for too small
+                    if (warea_this < warea)
+                        total_fitness += 1500;
                     break;                  
 
                 //office-workspace
@@ -215,7 +235,7 @@ public class ListGenome : Genome
                     double oprop = 0.9;
                     double ox = FinalMeshes[i].bounds.size.x;
                     double oz = FinalMeshes[i].bounds.size.z;
-                    double oarea_this = MeshArea(FinalMeshes[i]);
+                    oarea_this = MeshArea(FinalMeshes[i]);
 
                     total_fitness += DoTheMaths(ox, oz, ominsize, omaxsize, oarea, oprop, oarea_this);
 
@@ -228,14 +248,26 @@ public class ListGenome : Genome
                     double sprop = 0.86;
                     double sx = FinalMeshes[i].bounds.size.x;
                     double sz = FinalMeshes[i].bounds.size.z;
-                    double sarea_this = MeshArea(FinalMeshes[i]);
+                    sarea_this = MeshArea(FinalMeshes[i]);
 
                     total_fitness += DoTheMaths(sx, sz, sminsize, smaxsize, sarea, sprop, sarea_this);
 
                     break;
+                   
+
             }
+            //extra penalties for room area comparison
+            
+            if (warea_this > larea_this)
+                total_fitness += 5000;
+            if (warea_this > barea_this)
+                total_fitness += 5000;
+
+
+
         }
-        return total_fitness;
+        //remaping (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+        return (total_fitness - 0) / (50000 - 0) * (100- 10) + 10; 
     }
 
     public override double CalculateFitness()
@@ -253,7 +285,7 @@ public class ListGenome : Genome
     public override string ToMyStringOnlyG()
     {
         string strResult = "";
-        for (int i = 0; i < Lengthother; i++)
+        for (int i = 0; i < TheArray.Count; i++)
         {
             strResult = strResult + (TheArray[i]).ToString();
         }
@@ -266,11 +298,11 @@ public class ListGenome : Genome
     {
         ((ListGenome)dest).FinalMeshes = this.FinalMeshes;
         ((ListGenome)dest).CrossoverPoint = this.CrossoverPoint;
-        ((ListGenome)dest).CurrentFitness = this.CurrentFitness;
+       // ((ListGenome)dest).CurrentFitness = this.CurrentFitness;
         ((ListGenome)dest).HouseProg = this.HouseProg;
         ((ListGenome)dest).Lengthother = this.Lengthother;
         ((ListGenome)dest).letters = this.letters;
-        ((ListGenome)dest).MutationIndex = this.MutationIndex;
+        //((ListGenome)dest).MutationIndex = this.MutationIndex;
         //((ListGenome)dest).TheArray = this.TheArray;
 
     }

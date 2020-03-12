@@ -12,44 +12,31 @@ public class HouseGenerator : MonoBehaviour
 {
     //The parent object who stores all the Meshes of the house
     public Transform RoomParent;
-     
-
     //The final meshes to be visualized(the house representation)
     List<Mesh> FinalMeshes = new List<Mesh>();
-
-    //Materials for each Room, set the materials in the inspector
+   //Materials for each Room, set the materials in the inspector
     public Material[] myMaterials = new Material[20];
 
     //UI
     public GameObject Panel;
-    public Text myText;
     public Text myOtherText;
     public Slider mSlider;
+    public Slider bSlider;
+    public ProgressBar Pb;
 
-    //Initialize Strings
+    //Initialize 
     string Rule = "";
     string HouseProg = "";
-    int num ;
-     
-
-    //Call the house class
+    int num = 0 ;
+    
     House myHouse;
-
-    //Call the Population class
     Population TestPopulation;
 
-    //time for prefabs
-    public GameObject k;
-    public GameObject b;
-    public GameObject l;
-    public GameObject s;
-    public GameObject o;
-    public GameObject w;
-
-    //room prefabs lets try
+    //Prefabs
+    public GameObject k; public GameObject b; public GameObject l;
+    public GameObject s; public GameObject o;  public GameObject w;
     public GameObject room;
 
-    // Start is called before the first frame update
     void Start()
     {
         Debug.Log(num.ToString());
@@ -65,27 +52,41 @@ public class HouseGenerator : MonoBehaviour
         Panel.SetActive(false);
 
     }
-    // Update is called once per frame
+   
     void Update()
     {
-         
-          
-         
+
+       
+
+
 
     }
+    //Restarts the whole application
+    public void Kill()
+    {
+        myOtherText.text = "";
+        Pb.BarValue = 0;
+        var clones = GameObject.FindGameObjectsWithTag("Finish");
+        foreach (var clone in clones)
+        Destroy(clone);    
+    }
+
     public void AssignNum()
     {
-
         num = (int) mSlider.value;
-        Debug.Log(num.ToString());
+        Debug.Log("pink"+ num.ToString());
     }
 
+    public void AssignNumBlue()
+    {
+        num = (int)bSlider.value;
+        Debug.Log("blue"+num.ToString());     
+    }
+    
     public void MakeRule(string st)
     {
         FinalMeshes.Clear();
-        Debug.Log(st+"sto make rule");
         Rule = st;
-        Debug.Log(Rule + "sto make house");
         myHouse = new House(Rule,num);
         myHouse.CreateRooms();
         myHouse.GetFinalRooms();
@@ -96,14 +97,15 @@ public class HouseGenerator : MonoBehaviour
             Mesh rect2 = item.Rec;
             FinalMeshes.Add(rect2);
         }
+        //output message with te number of rooms
         myOtherText.text = $"{myHouse.GetRoomNum()}" + " Rooms in " + Rule;
 
     }
     
-
     //STEP 1
     public void MakeHouse()
-    {
+    {      
+        FinalMeshes.Clear();
         //check for accurate Room labels
         if (IsValid(HouseProg))
         {
@@ -127,110 +129,101 @@ public class HouseGenerator : MonoBehaviour
             Panel.SetActive(true);
         }
         myOtherText.text = $"{myHouse.GetRoomNum()}" + " Rooms in " + Rule;
-
+        
     }
 
     //STEP 2
     public void DrawHouse()
     {
+        Kill();
         //kill 'em all(so you don't have houses created on the to of each other)
         for (int j = 0; j < RoomParent.childCount; j++)
         {
-            Destroy(RoomParent.GetChild(j).gameObject);
-            // DestroyImmediate(room,true);
-           
-
+            Destroy(RoomParent.GetChild(j).gameObject);         
         }
-        Destroy(GameObject.Find(room + " (Clone)"));
-
-        //For each Room you made in Run() draw the mesh
+        
+        //For each Room you made in Run() draw the mesh(floor) and the prefab(walls)
         for (int i = 0; i < myHouse.GetFinalRooms().Count; i++)
         {
-
-            GameObject gameob = new GameObject("Mesh" + $"{i}", typeof(MeshFilter), typeof(MeshRenderer), typeof(Text));
-            gameob.GetComponent<MeshFilter>().mesh = FinalMeshes[i];
-            gameob.GetComponent<MeshRenderer>().material = myMaterials[i];
-
+            GameObject floors = new GameObject("Mesh" + $"{i}", typeof(MeshFilter), typeof(MeshRenderer), typeof(Text));
+            floors.GetComponent<MeshFilter>().mesh = FinalMeshes[i];
+            floors.GetComponent<MeshRenderer>().material = myMaterials[i];
+            floors.tag = "Finish";
             //put all the gameobjects to a parent object
-            gameob.transform.SetParent(RoomParent);
-       
-            
-            Vector3 corn = RoomParent.GetChild(i).GetComponent<MeshRenderer>().bounds.max;
+            floors.transform.SetParent(RoomParent);
+                 
+            Vector3 corner = RoomParent.GetChild(i).GetComponent<MeshRenderer>().bounds.max;
             float xsize = RoomParent.GetChild(i).GetComponent<MeshFilter>().mesh.bounds.size.x;
             float zsize = RoomParent.GetChild(i).GetComponent<MeshFilter>().mesh.bounds.size.z;
-           
-
-
-            Vector3 up = new Vector3(0, 0.1f, 0);
-            room.transform.localScale = new Vector3(xsize-0.01f*xsize, 2, zsize-0.01f*zsize);
-            Instantiate(room, corn + up, Quaternion.identity);
-            room.GetComponent<MeshRenderer>().material = myMaterials[i];
-            
-             
+            room.transform.localScale = new Vector3(xsize- xsize/16, 2, zsize- zsize/14);
+            GameObject RoomWalls = (GameObject)Instantiate(room, corner, Quaternion.identity);
+            RoomWalls.GetComponent<MeshRenderer>().material = myMaterials[i];
+            RoomWalls.tag = "Finish";
         }
     }
 
 
     //STEP 3
     public void RunGa()
-    {
-        // //Run the GA
+    {    
         TestPopulation = new Population(HouseProg.Length, HouseProg, FinalMeshes);
         TestPopulation.WriteNextGeneration();
+        //write the inital population in a text file
         for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
         {
             WriteString(TestPopulation.GenomesList[i] + " " + TestPopulation.OnlyF[i]);
         }
-
-        for (int k = 0; k < 10; k++)
+        //write every other generation in the text file
+        for (int k = 0; k < 3; k++)
         {
             WriteString(k.ToString());
             TestPopulation.NextGeneration();
             TestPopulation.WriteNextGeneration();
             for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
             {
-                WriteString(TestPopulation.GenomesList[i]+" "+TestPopulation.OnlyF[i]);
-            }
-        }
-
-        //here should be the very best individual(it's not) 
-        
-        myText.text = TestPopulation.GenomesList[0]+" "+ TestPopulation.OnlyF[0];
-        
-
+                WriteString(TestPopulation.GenomesList[i]+" "+TestPopulation.OnlyF[i]);            
+            }         
+        }      
+        //assign the value of the fitness bar
+         Pb.BarValue = 100- TestPopulation.OnlyF[0];
     }
 
     //STEP 4
     public void DrawLabels()
     {
         List<char> myfinallabels = TestPopulation.GenomesList[0].ToList();
-        Debug.Log(TestPopulation.OnlyF[0]);
-
         for (int j = 0; j < RoomParent.childCount; j++)
         {
             Vector3 pos = RoomParent.GetChild(j).GetComponent<MeshRenderer>().bounds.center;
-             //GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            //obj.transform.position = pos;
             Vector3 up = new Vector3(0, 2.0f, 0);
+      
             switch (myfinallabels[j])
             {
                case 'k':
-                    Instantiate(k, pos + up, Quaternion.identity);break;
-                     
+                  GameObject kk= Instantiate(k, pos + up, Quaternion.identity);
+                    kk.tag = "Finish";
+                    break;                    
                 case 'l':
-                    Instantiate(l, pos+ up, Quaternion.identity); break;
+                    GameObject ll = Instantiate(l, pos+ up, Quaternion.identity);
+                    ll.tag = "Finish";
+                    break;
                 case 'o':
-                   Instantiate(o, pos + up, Quaternion.identity); break;
+                    GameObject oo = Instantiate(o, pos + up, Quaternion.identity);
+                    oo.tag = "Finish";
+                    break;
                 case 'w':
-                    Instantiate(w, pos + up, Quaternion.identity); break;
+                    GameObject ww = Instantiate(w, pos + up, Quaternion.identity);
+                    ww.tag = "Finish";
+                    break;
                 case 'b':
-                    Instantiate(b, pos + up, Quaternion.identity); break;
+                    GameObject bb = Instantiate(b, pos + up, Quaternion.identity);
+                    bb.tag = "Finish";
+                    break;
                 case 's':
-                    Instantiate(s, pos + up, Quaternion.identity); break;
-
-
-            }
-            
+                    GameObject ss= Instantiate(s, pos + up, Quaternion.identity);
+                    ss.tag = "Finish";
+                    break;
+            }          
         }
     }
 
@@ -240,12 +233,10 @@ public class HouseGenerator : MonoBehaviour
         HouseProg = st;
     }
 
-
     void GetHouseAsMesh(int length)
     {
         //Clear the lists from previous given Rule, to visualize the next
         FinalMeshes.Clear();
-
 
         // Create the House Class Instance  
         RandomRuleGen R = new RandomRuleGen(length);
@@ -259,31 +250,23 @@ public class HouseGenerator : MonoBehaviour
         {
             Mesh rect2 = item.Rec;
             FinalMeshes.Add(rect2);
-
         }
     }
 
+   // checked if the house program given is valid
     private static bool IsValid(string str)
     {
-        //check for valid chars in user input
+        //check for valid characters in user input
         return Regex.IsMatch(str, @"^[ktblwso]+$");
     }
 
-
+    //write the GA files to an exterior text file
     [MenuItem("Tools/Write file")]
-    static void WriteString(string g)
+    static void WriteString(string value)
     {
-        string path = "Assets/WriteGens.txt";
-
-        //Write some text to the test.txt file
+        string path = "Assets/WriteGens.txt";    
         StreamWriter writer = new StreamWriter(path, true);
-        writer.WriteLine(g);
+        writer.WriteLine(value);
         writer.Close();
-
-        //Re-import the file to update the reference in the editor
-       // AssetDatabase.ImportAsset(path);
-       // TextAsset asset = (TextAsset)Resources.Load(path);
-
-
     }
 }

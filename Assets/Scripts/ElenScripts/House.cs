@@ -24,8 +24,8 @@ public class House
 
         verticesp[0] = new Vector3(0, 0, 0);
         verticesp[1] = new Vector3(0, 0, num);
-        verticesp[2] = new Vector3(num, 0, num);
-        verticesp[3] = new Vector3(num, 0,0);
+        verticesp[2] = new Vector3(num+3, 0, num);
+        verticesp[3] = new Vector3(num+3, 0,0);
 
         parentrec.vertices = verticesp;
         parentrec.triangles = new int[] { 0, 3, 2, 0, 2, 1 };
@@ -100,11 +100,11 @@ public class House
 
                             //Dissect in shortest side(1/3 - 2/3) next rule applies to both Room.
                             case 'H':
-                              //  next.AddRange(RuleH(currentRoom)); break;
+                               next.AddRange(RuleH(currentRoom)); break;
 
                             //Dissect in shortest side(2/3 - 1/3) next rule applies to both Room.
                             case 'I':
-                               // next.AddRange(RuleI(currentRoom)); break;
+                                next.AddRange(RuleI(currentRoom)); break;
 
                             //Dissect in shortest side(1/2 - 1/2) next rule applies to first Room.
                             case 'J':
