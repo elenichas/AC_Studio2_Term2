@@ -20,6 +20,7 @@ public class HouseGenerator : MonoBehaviour
     //UI
     public GameObject Panel;
     public Text myOtherText;
+    public Text myText;
     public Slider mSlider;
     public Slider bSlider;
     public ProgressBar Pb;
@@ -64,6 +65,9 @@ public class HouseGenerator : MonoBehaviour
     //Restarts the whole application
     public void Kill()
     {
+        myText.text = "";
+        mSlider.value = 0;
+        bSlider.value = 0;
         myOtherText.text = "";
         Pb.BarValue = 0;
         var clones = GameObject.FindGameObjectsWithTag("Finish");
@@ -98,13 +102,14 @@ public class HouseGenerator : MonoBehaviour
             FinalMeshes.Add(rect2);
         }
         //output message with te number of rooms
-        myOtherText.text = $"{myHouse.GetRoomNum()}" + " Rooms in " + Rule;
+        myOtherText.text = $"{myHouse.GetRoomNum()}"+" ROOMS";
 
     }
     
     //STEP 1
     public void MakeHouse()
-    {      
+    {
+        myText.text = " ";
         FinalMeshes.Clear();
         //check for accurate Room labels
         if (IsValid(HouseProg))
@@ -122,20 +127,22 @@ public class HouseGenerator : MonoBehaviour
                 else
                     GetHouseAsMesh(3);
             }
+            DrawHouse();
+            myOtherText.text = $"{myHouse.GetRoomNum()}" + " ROOMS";
         }
         else
         {
             //error window pops up when you mistype rooms(rooms that don't exist in the GA)
-            Panel.SetActive(true);
+            myText.text = "WRONG INPUT,TRY AGAIN";
         }
-        myOtherText.text = $"{myHouse.GetRoomNum()}" + " Rooms in " + Rule;
+      
         
     }
 
     //STEP 2
     public void DrawHouse()
     {
-        Kill();
+       
         //kill 'em all(so you don't have houses created on the to of each other)
         for (int j = 0; j < RoomParent.childCount; j++)
         {
@@ -174,18 +181,33 @@ public class HouseGenerator : MonoBehaviour
             WriteString(TestPopulation.GenomesList[i] + " " + TestPopulation.OnlyF[i]);
         }
         //write every other generation in the text file
-        for (int k = 0; k < 3; k++)
+        for (int k = 0; k < 5; k++)
         {
             WriteString(k.ToString());
             TestPopulation.NextGeneration();
             TestPopulation.WriteNextGeneration();
+            
             for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
             {
-                WriteString(TestPopulation.GenomesList[i]+" "+TestPopulation.OnlyF[i]);            
+                
+                
+                WriteString(TestPopulation.GenomesList[i]+" "+TestPopulation.OnlyF[i]);
+                
             }         
-        }      
+        }
+        DrawGa();
         //assign the value of the fitness bar
          Pb.BarValue = 100- TestPopulation.OnlyF[0];
+    }
+    public void DrawGa()
+    {
+        for (int i = 0; i < TestPopulation.OnlyF.Count; i++)
+        {
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.transform.position = new Vector3(i*0.5f +150.0f, 0, TestPopulation.OnlyF[i] / 10);
+            cube.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            //cube.tag = " Respawn";
+        }
     }
 
     //STEP 4
