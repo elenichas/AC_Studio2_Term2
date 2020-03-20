@@ -156,7 +156,9 @@ public class ListGenome : Genome
         double barea_this = 0;
         double warea_this = 0;
         double oarea_this = 0;
+        double narea_this = 0;
         double sarea_this = 0;
+        double harea_this = 0;
 
         for (int i = 0; i < TheArray.Count; i++)
         {
@@ -221,10 +223,10 @@ public class ListGenome : Genome
                     total_fitness += DoTheMaths(wx, wz, wminsize, wmaxsize, warea, wprop, warea_this);
                     //penalty for too big
                     if (warea_this >  warea)
-                        total_fitness += 2500;
+                        total_fitness += 1000;
                     //penalty for too small
                     if (warea_this < warea)
-                        total_fitness += 1500;
+                        total_fitness += 1000;
                     break;                  
 
                 //office-workspace
@@ -240,12 +242,26 @@ public class ListGenome : Genome
                     total_fitness += DoTheMaths(ox, oz, ominsize, omaxsize, oarea, oprop, oarea_this);
 
                     break;
+                //nursery
+                case 'n':
+                    double nminsize =2.9;
+                    double nmaxsize = 3.0;
+                    double narea = 4.0;
+                    double nprop = 0.86;
+                    double nx = FinalMeshes[i].bounds.size.x;
+                    double nz = FinalMeshes[i].bounds.size.z;
+                    narea_this = MeshArea(FinalMeshes[i]);
+
+                    total_fitness += DoTheMaths(nx, nz, nminsize, nmaxsize, narea, nprop, narea_this);
+
+                    break;
+
                 //storage
                 case 's':
-                    double sminsize =0.6;
-                    double smaxsize = 3.09;
-                    double sarea = 1.85;
-                    double sprop = 0.86;
+                    double sminsize = 1.5;
+                    double smaxsize = 2.0;
+                    double sarea = 3.0;
+                    double sprop = 0.9;
                     double sx = FinalMeshes[i].bounds.size.x;
                     double sz = FinalMeshes[i].bounds.size.z;
                     sarea_this = MeshArea(FinalMeshes[i]);
@@ -253,21 +269,36 @@ public class ListGenome : Genome
                     total_fitness += DoTheMaths(sx, sz, sminsize, smaxsize, sarea, sprop, sarea_this);
 
                     break;
-                   
 
+                //help space,laundy etc
+                case 'h':
+                    double hminsize = 1.5;
+                    double hmaxsize = 2.0;
+                    double harea = 3.0;
+                    double hprop = 0.9;
+                    double hx = FinalMeshes[i].bounds.size.x;
+                    double hz = FinalMeshes[i].bounds.size.z;
+                    harea_this = MeshArea(FinalMeshes[i]);
+
+                    total_fitness += DoTheMaths(hx, hz, hminsize, hmaxsize, harea, hprop, harea_this);
+
+                    break;
             }
             //extra penalties for room area comparison
             
             if (warea_this > larea_this)
-                total_fitness += 5000;
+                total_fitness += 1000;
             if (warea_this > barea_this)
-                total_fitness += 5000;
+                total_fitness += 1000;
+            if (narea_this > barea_this)
+                total_fitness += 1000;
 
 
 
         }
         //remaping (value - from1) / (to1 - from1) * (to2 - from2) + from2;
-        return (total_fitness - 0) / (50000 - 0) * (100- 10) + 10; 
+         return (total_fitness - 0) / (30000 - 0) * (100- 0) + 0;
+       // return total_fitness;
     }
 
     public override double CalculateFitness()
@@ -298,7 +329,7 @@ public class ListGenome : Genome
     {
         ((ListGenome)dest).FinalMeshes = this.FinalMeshes;
         ((ListGenome)dest).CrossoverPoint = this.CrossoverPoint;
-       // ((ListGenome)dest).CurrentFitness = this.CurrentFitness;
+        //((ListGenome)dest).CurrentFitness = this.CurrentFitness;
         ((ListGenome)dest).HouseProg = this.HouseProg;
         ((ListGenome)dest).Lengthother = this.Lengthother;
         ((ListGenome)dest).letters = this.letters;

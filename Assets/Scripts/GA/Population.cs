@@ -28,7 +28,7 @@ public class Population
     public List<Mesh> FinalMeshes;
 
     public List<string> GenomesList;
-    public List<int> OnlyF;
+    public List<double> OnlyF;
 
 
     public Population(int HousePorgramLength, string HouseProg, List<Mesh> FinalMeshes)
@@ -118,6 +118,7 @@ public class Population
         //if (Genomes.Count > kPopulationLimit)
 
         //Genomes.RemoveRange(kPopulationLimit, Genomes.Count - kPopulationLimit);
+       // Genomes.Sort();
         CurrentPopulation = Genomes.Count;
         Generation++;
     }
@@ -138,7 +139,7 @@ public class Population
         ArrayList GeneMoms = new ArrayList();
         ArrayList GeneDads = new ArrayList();
 
-        for (int i = 0; i < genes.Count; i++)
+        for (int i = 0; i < genes.Count/2; i++)
         {
             GeneMoms.Add(genes[ListGenome.TheSeed.Next(genes.Count)]);
             GeneDads.Add(genes[ListGenome.TheSeed.Next(genes.Count)]);
@@ -172,7 +173,7 @@ public class Population
             //{
             // if Best2 is true, add top fitness genes
             GenomeResults.Add(GenomeFamily[0]);
-            //GenomeResults.Add(GenomeFamily[1]);
+            GenomeResults.Add(GenomeFamily[1]);
 
             //}
             //else
@@ -193,7 +194,7 @@ public class Population
         // Debug.Log(Generation);
         // Debug.Log(CurrentPopulation);
         GenomesList = new List<string>();
-        OnlyF = new List<int>();
+        OnlyF = new List<double>();
 
         for (int i = 0; i < CurrentPopulation; i++)
         {
@@ -201,7 +202,7 @@ public class Population
             GenomesList.Add(((Genome)Genomes[i]).ToMyStringOnlyG());
 
             //Have their fitnesses to another
-            OnlyF.Add(((Genome)Genomes[i]).ToMyStringOnlyF());
+            OnlyF.Add(((Genome)Genomes[i]).CalculateFitness());
         }
         GenomesList.Sort();
         //GenomesList.Reverse();

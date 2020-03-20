@@ -76,7 +76,7 @@ public class ProgressBar : MonoBehaviour
     void UpdateValue(float val)
     {
         bar.fillAmount = val / 100;
-        txtTitle.text = Title + " " + val + "%";
+        txtTitle.text = Title + " " +(int)val + "%";
 
         if (Alert >= val)
         {

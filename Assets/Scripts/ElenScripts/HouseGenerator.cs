@@ -18,26 +18,33 @@ public class HouseGenerator : MonoBehaviour
     public Material[] myMaterials = new Material[20];
 
     //UI
-    public GameObject Panel;
+    public GameObject CanvasB;
+    public GameObject CanvasP;
     public Text myOtherText;
     public Text myText;
     public Slider mSlider;
     public Slider bSlider;
     public ProgressBar Pb;
+    public ProgressBar PbR;
 
     //Initialize 
     string Rule = "";
     string HouseProg = "";
     int num = 0 ;
+
+    public GameObject forGraph;
     
     House myHouse;
-    Population TestPopulation;
+    public Population TestPopulation;
+     
 
     //Prefabs
     public GameObject k; public GameObject b; public GameObject l;
-    public GameObject s; public GameObject o;  public GameObject w;
+    public GameObject n; public GameObject o;  public GameObject w;
+    public GameObject h; public GameObject s;
     public GameObject room;
 
+    public List<double> theamazing = new List<double>();
     void Start()
     {
         Debug.Log(num.ToString());
@@ -50,7 +57,7 @@ public class HouseGenerator : MonoBehaviour
             Mesh rect2 = item.Rec;
             FinalMeshes.Add(rect2);
        }
-        Panel.SetActive(false);
+        
 
     }
    
@@ -64,15 +71,17 @@ public class HouseGenerator : MonoBehaviour
     }
     //Restarts the whole application
     public void Kill()
-    {
+    {     
         myText.text = "";
         mSlider.value = 0;
-        bSlider.value = 0;
+       bSlider.value = 0;
         myOtherText.text = "";
-        Pb.BarValue = 0;
+       // Pb.BarValue = 0;
+       //PbR.BarValue = 0;
         var clones = GameObject.FindGameObjectsWithTag("Finish");
         foreach (var clone in clones)
-        Destroy(clone);    
+        Destroy(clone); 
+        
     }
 
     public void AssignNum()
@@ -128,7 +137,7 @@ public class HouseGenerator : MonoBehaviour
                     GetHouseAsMesh(3);
             }
             DrawHouse();
-            myOtherText.text = $"{myHouse.GetRoomNum()}" + " ROOMS";
+            myOtherText.text = $"{Rule +" WITH "+myHouse.GetRoomNum()}" + " ROOMS";
         }
         else
         {
@@ -172,44 +181,59 @@ public class HouseGenerator : MonoBehaviour
 
     //STEP 3
     public void RunGa()
-    {    
+    {
+        
         TestPopulation = new Population(HouseProg.Length, HouseProg, FinalMeshes);
         TestPopulation.WriteNextGeneration();
         //write the inital population in a text file
         for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
         {
-            WriteString(TestPopulation.GenomesList[i] + " " + TestPopulation.OnlyF[i]);
+            WriteString(TestPopulation.GenomesList[i] + " " + (int)TestPopulation.OnlyF[i]);
         }
         //write every other generation in the text file
-        for (int k = 0; k < 5; k++)
-        {
+        for (int k = 0; k < 100; k++)
+        {         
             WriteString(k.ToString());
             TestPopulation.NextGeneration();
             TestPopulation.WriteNextGeneration();
-            
+           //forGraph.GetComponent<Window_Graph>().Next(TestPopulation.OnlyF);
+
             for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
-            {
-                
-                
-                WriteString(TestPopulation.GenomesList[i]+" "+TestPopulation.OnlyF[i]);
-                
-            }         
+            {                             
+               WriteString(TestPopulation.GenomesList[i]+" "+(int)TestPopulation.OnlyF[i]);              
+            }
+            theamazing.Add(TestPopulation.OnlyF[0]);
         }
+       
         DrawGa();
-        //assign the value of the fitness bar
-         Pb.BarValue = 100- TestPopulation.OnlyF[0];
+       
     }
     public void DrawGa()
     {
-        for (int i = 0; i < TestPopulation.OnlyF.Count; i++)
+        //ShowGraph(valueList);
+        //assign the value of the fitness bar
+       
+        for (int i = 0; i < theamazing.Count; i++)
         {
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.transform.position = new Vector3(i*0.5f +150.0f, 0, TestPopulation.OnlyF[i] / 10);
-            cube.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-            //cube.tag = " Respawn";
+           theamazing[i]/=10;
         }
+        forGraph.GetComponent<Window_Graph>().Next(theamazing);
+       
+        
     }
 
+    public void Fillthebar()
+    {
+        Debug.Log(TestPopulation.OnlyF[0]);
+        Pb.BarValue = (float)(100- TestPopulation.OnlyF[0]);
+
+    }
+
+    public void FilltheotherBar()
+    {
+        Debug.Log(TestPopulation.OnlyF[0]);
+        PbR.BarValue =(float)(100- TestPopulation.OnlyF[0]);
+    }
     //STEP 4
     public void DrawLabels()
     {
@@ -241,8 +265,16 @@ public class HouseGenerator : MonoBehaviour
                     GameObject bb = Instantiate(b, pos + up, Quaternion.identity);
                     bb.tag = "Finish";
                     break;
+                case 'n':
+                    GameObject nn= Instantiate(n, pos + up, Quaternion.identity);
+                    nn.tag = "Finish";
+                    break;
+                case 'h':
+                    GameObject hh = Instantiate(h, pos + up, Quaternion.identity);
+                    hh.tag = "Finish";
+                    break;
                 case 's':
-                    GameObject ss= Instantiate(s, pos + up, Quaternion.identity);
+                    GameObject ss = Instantiate(s, pos + up, Quaternion.identity);
                     ss.tag = "Finish";
                     break;
             }          
@@ -279,7 +311,7 @@ public class HouseGenerator : MonoBehaviour
     private static bool IsValid(string str)
     {
         //check for valid characters in user input
-        return Regex.IsMatch(str, @"^[ktblwso]+$");
+        return Regex.IsMatch(str, @"^[kblwnosh]+$");
     }
 
     //write the GA files to an exterior text file

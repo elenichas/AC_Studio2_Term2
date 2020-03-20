@@ -234,7 +234,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 782d0afbacfcac54dbf3cbd3e41e77e0, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
@@ -383,7 +383,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Fitness
   TitleColor: {r: 1, g: 1, b: 1, a: 1}
-  TitleFont: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+  TitleFont: {fileID: 12800000, guid: 782d0afbacfcac54dbf3cbd3e41e77e0, type: 3}
   TitleFontSize: 40
   BarColor: {r: 0, g: 1, b: 0.07058835, a: 1}
   BarBackGroundColor: {r: 1, g: 1, b: 1, a: 1}
