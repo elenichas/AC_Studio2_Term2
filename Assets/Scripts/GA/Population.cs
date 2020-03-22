@@ -9,9 +9,9 @@ public class Population
     const int kInitialPopulation = 50;
     // const int kPopulationLimit = 50;
 
-    const float kMutationFrequency = 0.1f;
+    const float kMutationFrequency = 0.2f;
     //const float kDeathFitness = 0.0f;
-    // const float kReproductionFitness = 30.0f;
+    //const float kReproductionFitness = 30.0f;
 
     //In ArrayList we can store different datatype variables.
     ArrayList Genomes = new ArrayList();
@@ -30,14 +30,11 @@ public class Population
     public List<string> GenomesList;
     public List<double> OnlyF;
 
-
     public Population(int HousePorgramLength, string HouseProg, List<Mesh> FinalMeshes)
     {
         this.HousePorgramLength = HousePorgramLength;
         this.HouseProg = HouseProg;
         this.FinalMeshes = FinalMeshes;
-
-
 
         for (int i = 0; i < kInitialPopulation; i++)
         {
@@ -45,7 +42,6 @@ public class Population
             aGenome.SetCrossoverPoint((int)HousePorgramLength / 2);
             aGenome.CalculateFitness();
             Genomes.Add(aGenome);
-
 
         }
         Debug.Log(Genomes.Count + "the number in constructor");
@@ -88,7 +84,6 @@ public class Population
         // GenomeReproducers.Add(Genomes[i]);
         // }
         // }
-
 
         GenomeReproducers = new ArrayList(Genomes);
 
@@ -139,7 +134,7 @@ public class Population
         ArrayList GeneMoms = new ArrayList();
         ArrayList GeneDads = new ArrayList();
 
-        for (int i = 0; i < genes.Count/2; i++)
+        for (int i = 0; i < genes.Count; i++)
         {
             GeneMoms.Add(genes[ListGenome.TheSeed.Next(genes.Count)]);
             GeneDads.Add(genes[ListGenome.TheSeed.Next(genes.Count)]);
@@ -173,7 +168,7 @@ public class Population
             //{
             // if Best2 is true, add top fitness genes
             GenomeResults.Add(GenomeFamily[0]);
-            GenomeResults.Add(GenomeFamily[1]);
+            //GenomeResults.Add(GenomeFamily[1]);
 
             //}
             //else

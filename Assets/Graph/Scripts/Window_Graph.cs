@@ -21,8 +21,9 @@ public class Window_Graph : MonoBehaviour {
     public void Next(List<double>flist)
     {
          
-      //f TestPopulation.OnlyF;
+       
         ShowGraph(flist);
+        
     }
    
 
@@ -36,6 +37,7 @@ public class Window_Graph : MonoBehaviour {
         rectTransform.sizeDelta = new Vector2(2, 2);
         rectTransform.anchorMin = new Vector2(0, 0);
         rectTransform.anchorMax = new Vector2(0, 0);
+        gameObject.tag = "Finish";
         return gameObject;
     }
 
@@ -58,6 +60,7 @@ public class Window_Graph : MonoBehaviour {
 
     private void CreateDotConnection(Vector2 dotPositionA, Vector2 dotPositionB) {
         GameObject gameObject = new GameObject("dotConnection", typeof(Image));
+        gameObject.tag = "Finish";
         gameObject.transform.SetParent(graphContainer, false);
         gameObject.GetComponent<Image>().color = new Color(5,5,5, 1);
         RectTransform rectTransform = gameObject.GetComponent<RectTransform>();

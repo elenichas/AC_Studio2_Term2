@@ -99,11 +99,8 @@ public class ListGenome : Genome
     {
         char RandRoom = letters[UnityEngine.Random.Range(0, letters.Count)];
         letters.Remove(RandRoom);
-
         return RandRoom;
-
     }
-
 
     //ORDERED CHANGING MUTATION(just take 2 random and flip them)
     public override void Mutate()
@@ -116,7 +113,6 @@ public class ListGenome : Genome
         var g2 = TheArray[geneToFlipWith];
         TheArray[GeneToMutate] = g2;
         TheArray[geneToFlipWith] = g1;
-
     }
 
 
@@ -143,8 +139,6 @@ public class ListGenome : Genome
         }
           f += Math.Pow(area - area_this, 2);
        
-       
-
         return f;
     }
 
@@ -166,7 +160,6 @@ public class ListGenome : Genome
             {
                 //kitchen
                 case 'k':
-                   
                    double kminsize = 2.81;
                    double kmaxsize = 3.42;
                    double karea = 9.68;
@@ -174,7 +167,6 @@ public class ListGenome : Genome
                    double kx = FinalMeshes[i].bounds.size.x;
                    double kz = FinalMeshes[i].bounds.size.z;
                    karea_this = MeshArea(FinalMeshes[i]);
-
                    total_fitness += DoTheMaths( kx, kz,kminsize,kmaxsize, karea,kprop, karea_this);                
                     break;
 
@@ -187,8 +179,8 @@ public class ListGenome : Genome
                     double lx = FinalMeshes[i].bounds.size.x;
                     double lz = FinalMeshes[i].bounds.size.z;
                     larea_this = MeshArea(FinalMeshes[i]);
-
                     total_fitness += DoTheMaths(lx, lz,lminsize, lmaxsize, larea, lprop, larea_this);
+                    
                     //penalty for too big
                     if (larea_this > larea)
                         total_fitness += 500;
@@ -206,7 +198,6 @@ public class ListGenome : Genome
                     double bx = FinalMeshes[i].bounds.size.x;
                     double bz = FinalMeshes[i].bounds.size.z;
                     barea_this = MeshArea(FinalMeshes[i]);
-
                     total_fitness += DoTheMaths(bx, bz, bminsize, bmaxsize, barea, bprop, barea_this);
                     break;
 
@@ -218,8 +209,7 @@ public class ListGenome : Genome
                     double wprop = 0.86;
                     double wx = FinalMeshes[i].bounds.size.x;
                     double wz = FinalMeshes[i].bounds.size.z;
-                     warea_this = MeshArea(FinalMeshes[i]);
-
+                    warea_this = MeshArea(FinalMeshes[i]);
                     total_fitness += DoTheMaths(wx, wz, wminsize, wmaxsize, warea, wprop, warea_this);
                     //penalty for too big
                     if (warea_this >  warea)
@@ -238,10 +228,9 @@ public class ListGenome : Genome
                     double ox = FinalMeshes[i].bounds.size.x;
                     double oz = FinalMeshes[i].bounds.size.z;
                     oarea_this = MeshArea(FinalMeshes[i]);
-
                     total_fitness += DoTheMaths(ox, oz, ominsize, omaxsize, oarea, oprop, oarea_this);
-
                     break;
+
                 //nursery
                 case 'n':
                     double nminsize =2.9;
@@ -251,9 +240,7 @@ public class ListGenome : Genome
                     double nx = FinalMeshes[i].bounds.size.x;
                     double nz = FinalMeshes[i].bounds.size.z;
                     narea_this = MeshArea(FinalMeshes[i]);
-
                     total_fitness += DoTheMaths(nx, nz, nminsize, nmaxsize, narea, nprop, narea_this);
-
                     break;
 
                 //storage
@@ -265,9 +252,7 @@ public class ListGenome : Genome
                     double sx = FinalMeshes[i].bounds.size.x;
                     double sz = FinalMeshes[i].bounds.size.z;
                     sarea_this = MeshArea(FinalMeshes[i]);
-
                     total_fitness += DoTheMaths(sx, sz, sminsize, smaxsize, sarea, sprop, sarea_this);
-
                     break;
 
                 //help space,laundy etc
@@ -279,28 +264,20 @@ public class ListGenome : Genome
                     double hx = FinalMeshes[i].bounds.size.x;
                     double hz = FinalMeshes[i].bounds.size.z;
                     harea_this = MeshArea(FinalMeshes[i]);
-
-                    total_fitness += DoTheMaths(hx, hz, hminsize, hmaxsize, harea, hprop, harea_this);
-
+                   total_fitness += DoTheMaths(hx, hz, hminsize, hmaxsize, harea, hprop, harea_this);
                     break;
             }
-            //extra penalties for room area comparison
-            
+            //extra penalties for room area comparison          
             if (warea_this > larea_this)
                 total_fitness += 1000;
             if (warea_this > barea_this)
                 total_fitness += 1000;
             if (narea_this > barea_this)
                 total_fitness += 1000;
-
-
-
         }
         //remaping (value - from1) / (to1 - from1) * (to2 - from2) + from2;
-         return (total_fitness - 0) / (30000 - 0) * (100- 0) + 0;
-       // return total_fitness;
+         return (total_fitness - 0) / (30000 - 0) * (100- 0) + 0;       
     }
-
     public override double CalculateFitness()
     {
         CurrentFitness = CalculateHouseFitnessSum();
@@ -308,10 +285,8 @@ public class ListGenome : Genome
     }
 
     public override int ToMyStringOnlyF()
-    {
-        
-        return (int)CurrentFitness;
-            
+    {      
+        return (int)CurrentFitness;           
     }
     public override string ToMyStringOnlyG()
     {
@@ -320,9 +295,7 @@ public class ListGenome : Genome
         {
             strResult = strResult + (TheArray[i]).ToString();
         }
-
         return strResult;
-
     }
 
     public override void CopyGeneInfo(Genome dest)
@@ -341,11 +314,8 @@ public class ListGenome : Genome
     //THE CROSSOVER THE ORIGINAL ALGORITHM HAD (NOOOP)
     public override Genome Crossover(Genome g)
     { 
-
         ListGenome CrossingGene = new ListGenome();
-
         g.CopyGeneInfo(CrossingGene);
-
         var crossOverPt = (int)TheArray.Count / 2;
         var coin = ListGenome.TheSeed.NextDouble();
         for (int i = 0; i < crossOverPt; i++)
@@ -379,10 +349,8 @@ public class ListGenome : Genome
     //MY SUPER DUPER AMAZING ORDERED CROSSOVER NO PUBLICATES GUARANTEE
     public override Genome OrderedCrossover(Genome g)
     {
-
         ListGenome CrossingGene = new ListGenome();
          
-
         g.CopyGeneInfo(CrossingGene);
 
         var crossOverPt = (int)TheArray.Count / 2;
@@ -398,18 +366,13 @@ public class ListGenome : Genome
         for (int i = crossOverPt; i< TheArray.Count; i++)
         {
             for (int j = 0; j < ((ListGenome)g).TheArray.Count; j++)
-            {
-                
+            {               
                 if (!(CrossingGene.TheArray.Contains(((ListGenome)g).TheArray[j])))
-                    CrossingGene.TheArray.Add(((ListGenome)g).TheArray[j]);
-                 
+                    CrossingGene.TheArray.Add(((ListGenome)g).TheArray[j]);                
             }
-
         }
-
-        return CrossingGene;
+         return CrossingGene;
     }
-
 
 }
 

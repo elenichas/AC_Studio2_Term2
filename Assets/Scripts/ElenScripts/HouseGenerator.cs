@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Threading;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine.UI;
-using TMPro;
 using System.IO;
 using UnityEditor;
 
@@ -14,8 +12,10 @@ public class HouseGenerator : MonoBehaviour
     public Transform RoomParent;
     //The final meshes to be visualized(the house representation)
     List<Mesh> FinalMeshes = new List<Mesh>();
-   //Materials for each Room, set the materials in the inspector
+    //Materials for each Room, set the materials in the inspector
     public Material[] myMaterials = new Material[20];
+
+    
 
     //UI
     public GameObject CanvasB;
@@ -25,26 +25,29 @@ public class HouseGenerator : MonoBehaviour
     public Slider mSlider;
     public Slider bSlider;
     public ProgressBar Pb;
-    public ProgressBar PbR;
+
 
     //Initialize 
     string Rule = "";
     string HouseProg = "";
-    int num = 0 ;
+    int num = 0;
 
     public GameObject forGraph;
-    
+
     House myHouse;
     public Population TestPopulation;
-     
+    public Combinatorics test;
+
 
     //Prefabs
     public GameObject k; public GameObject b; public GameObject l;
-    public GameObject n; public GameObject o;  public GameObject w;
+    public GameObject n; public GameObject o; public GameObject w;
     public GameObject h; public GameObject s;
     public GameObject room;
-
-    public List<double> theamazing = new List<double>();
+    
+    //the list for graph representation
+    List<double> theamazing = new List<double>();
+   
     void Start()
     {
         Debug.Log(num.ToString());
@@ -56,28 +59,29 @@ public class HouseGenerator : MonoBehaviour
         {
             Mesh rect2 = item.Rec;
             FinalMeshes.Add(rect2);
-       }
-        
+        }
 
+       
+        
+       
     }
    
     void Update()
     {
 
-       
-
-
+ 
 
     }
     //Restarts the whole application
     public void Kill()
-    {     
+    {           
         myText.text = "";
         mSlider.value = 0;
-       bSlider.value = 0;
+        bSlider.value = 0;
         myOtherText.text = "";
-       // Pb.BarValue = 0;
-       //PbR.BarValue = 0;
+        Pb.BarValue = 0;
+        theamazing.Clear();
+
         var clones = GameObject.FindGameObjectsWithTag("Finish");
         foreach (var clone in clones)
         Destroy(clone); 
@@ -167,7 +171,8 @@ public class HouseGenerator : MonoBehaviour
             floors.tag = "Finish";
             //put all the gameobjects to a parent object
             floors.transform.SetParent(RoomParent);
-                 
+             
+            //this is how the house rooms are created in 3D
             Vector3 corner = RoomParent.GetChild(i).GetComponent<MeshRenderer>().bounds.max;
             float xsize = RoomParent.GetChild(i).GetComponent<MeshFilter>().mesh.bounds.size.x;
             float zsize = RoomParent.GetChild(i).GetComponent<MeshFilter>().mesh.bounds.size.z;
@@ -178,6 +183,18 @@ public class HouseGenerator : MonoBehaviour
         }
     }
 
+    public void DecideLabelMethod()
+    {
+        Debug.Log(HouseProg.Length+"the length");
+        if (HouseProg.Length > 6)
+        {
+            RunGa();
+        }
+        else
+        {
+            RunCombinatorics();
+        }
+    }
 
     //STEP 3
     public void RunGa()
@@ -202,42 +219,79 @@ public class HouseGenerator : MonoBehaviour
             {                             
                WriteString(TestPopulation.GenomesList[i]+" "+(int)TestPopulation.OnlyF[i]);              
             }
+            //the list with the best individual of each generation
             theamazing.Add(TestPopulation.OnlyF[0]);
         }
-       
-        DrawGa();
-       
-    }
-    public void DrawGa()
-    {
-        //ShowGraph(valueList);
-        //assign the value of the fitness bar
-       
+        //Draw the Graph for the GA
         for (int i = 0; i < theamazing.Count; i++)
         {
-           theamazing[i]/=10;
+            //to fit in the graph
+            theamazing[i] /= 10;
         }
+        //to draw the graph
         forGraph.GetComponent<Window_Graph>().Next(theamazing);
-       
-        
     }
+
+    public void RunCombinatorics()
+    {
+
+        test = new Combinatorics(FinalMeshes, HouseProg);
+        test.Permutations();
+        string C = test.BestCombination;
+        double F = test.bestFitness;
+
+       Debug.Log(C + F);
+        test.Fitnesses.Sort();
+        Debug.Log(test.Fitnesses.Count+"I AM THE COUNT");
+        for (int i = 0; i <  test.Fitnesses.Count; i++)
+        {
+            theamazing.Add(test.Fitnesses[i]);
+        }
+
+        //Draw the Graph for the Comb
+        for (int i = 0; i < theamazing.Count; i++)
+         {
+        //to fit in the graph
+          theamazing[i] /= 2;
+         }
+        theamazing.Reverse();
+        //to draw the graph
+        forGraph.GetComponent<Window_Graph>().Next(theamazing);
+
+
+    }
+
+     
 
     public void Fillthebar()
     {
-        Debug.Log(TestPopulation.OnlyF[0]);
-        Pb.BarValue = (float)(100- TestPopulation.OnlyF[0]);
-
+       
+        if (HouseProg.Length > 6)
+        {
+            Debug.Log(TestPopulation.OnlyF[0]);
+            Pb.BarValue = (float)(100 - TestPopulation.OnlyF[0]);
+        }
+        else
+        {
+            Debug.Log(test.bestFitness);
+            Pb.BarValue = (float)(100 - test.bestFitness);
+        }
     }
-
-    public void FilltheotherBar()
-    {
-        Debug.Log(TestPopulation.OnlyF[0]);
-        PbR.BarValue =(float)(100- TestPopulation.OnlyF[0]);
-    }
+   
     //STEP 4
     public void DrawLabels()
     {
-        List<char> myfinallabels = TestPopulation.GenomesList[0].ToList();
+         List<char> myfinallabels = new List<char>();
+       
+        if (HouseProg.Length > 6)
+        {
+            myfinallabels = TestPopulation.GenomesList[0].ToList();
+        }
+        else
+        {
+            myfinallabels = test.BestCombination.ToList();
+        }
+
         for (int j = 0; j < RoomParent.childCount; j++)
         {
             Vector3 pos = RoomParent.GetChild(j).GetComponent<MeshRenderer>().bounds.center;
@@ -266,7 +320,7 @@ public class HouseGenerator : MonoBehaviour
                     bb.tag = "Finish";
                     break;
                 case 'n':
-                    GameObject nn= Instantiate(n, pos + up, Quaternion.identity);
+                    GameObject nn= Instantiate(n, pos + 1.2f*up, Quaternion.identity);
                     nn.tag = "Finish";
                     break;
                 case 'h':
