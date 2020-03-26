@@ -10,12 +10,15 @@ public class HouseGenerator : MonoBehaviour
 {
     //The parent object who stores all the Meshes of the house
     public Transform RoomParent;
+   
     //The final meshes to be visualized(the house representation)
     List<Mesh> FinalMeshes = new List<Mesh>();
+   
     //Materials for each Room, set the materials in the inspector
     public Material[] myMaterials = new Material[20];
 
-    
+    //the list for graph representation
+    List<double> fitnessessum = new List<double>();
 
     //UI
     public GameObject CanvasB;
@@ -33,8 +36,7 @@ public class HouseGenerator : MonoBehaviour
     int num = 0;
 
     public GameObject forGraph;
-
-    House myHouse;
+    public House myHouse;
     public Population TestPopulation;
     public Combinatorics test;
 
@@ -45,8 +47,6 @@ public class HouseGenerator : MonoBehaviour
     public GameObject h; public GameObject s;
     public GameObject room;
     
-    //the list for graph representation
-    List<double> theamazing = new List<double>();
    
     void Start()
     {
@@ -59,17 +59,11 @@ public class HouseGenerator : MonoBehaviour
         {
             Mesh rect2 = item.Rec;
             FinalMeshes.Add(rect2);
-        }
-
-       
-        
-       
+        }     
     }
    
     void Update()
     {
-
- 
 
     }
     //Restarts the whole application
@@ -80,7 +74,7 @@ public class HouseGenerator : MonoBehaviour
         bSlider.value = 0;
         myOtherText.text = "";
         Pb.BarValue = 0;
-        theamazing.Clear();
+        fitnessessum.Clear();
 
         var clones = GameObject.FindGameObjectsWithTag("Finish");
         foreach (var clone in clones)
@@ -88,23 +82,26 @@ public class HouseGenerator : MonoBehaviour
         
     }
 
+    //assign value to slider
     public void AssignNum()
     {
         num = (int) mSlider.value;
         Debug.Log("pink"+ num.ToString());
     }
 
-    public void AssignNumBlue()
+    //assign value to ther slider
+    public void AssignNumOther()
     {
         num = (int)bSlider.value;
         Debug.Log("blue"+num.ToString());     
     }
-    
+
+    //Create the house DIRECTLY from the user input Rules(A,B,C,D...) 
     public void MakeRule(string st)
     {
         FinalMeshes.Clear();
         Rule = st;
-        myHouse = new House(Rule,num);
+        myHouse = new House(Rule, num);
         myHouse.CreateRooms();
         myHouse.GetFinalRooms();
 
@@ -115,10 +112,10 @@ public class HouseGenerator : MonoBehaviour
             FinalMeshes.Add(rect2);
         }
         //output message with te number of rooms
-        myOtherText.text = $"{myHouse.GetRoomNum()}"+" ROOMS";
+        myOtherText.text = $"{myHouse.GetRoomNum()}" + " ROOMS";
 
     }
-    
+
     //STEP 1
     public void MakeHouse()
     {
@@ -152,7 +149,7 @@ public class HouseGenerator : MonoBehaviour
         
     }
 
-    //STEP 2
+    //Creates the 3d represention of the house with prefabs instantiation
     public void DrawHouse()
     {
        
@@ -183,6 +180,7 @@ public class HouseGenerator : MonoBehaviour
         }
     }
 
+    //Decides wether the house should be labeled with Combinatorics or a GA
     public void DecideLabelMethod()
     {
         Debug.Log(HouseProg.Length+"the length");
@@ -196,7 +194,7 @@ public class HouseGenerator : MonoBehaviour
         }
     }
 
-    //STEP 3
+    //Calls the GA and outputs the best individuals of each generation on the Graph
     public void RunGa()
     {
         
@@ -205,33 +203,34 @@ public class HouseGenerator : MonoBehaviour
         //write the inital population in a text file
         for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
         {
-            WriteString(TestPopulation.GenomesList[i] + " " + (int)TestPopulation.OnlyF[i]);
+            WriteString(TestPopulation.GenomesList[i] + " " + TestPopulation.OnlyF[i]);
         }
         //write every other generation in the text file
         for (int k = 0; k < 100; k++)
         {         
-            WriteString(k.ToString());
+           WriteString(k.ToString());
             TestPopulation.NextGeneration();
             TestPopulation.WriteNextGeneration();
            //forGraph.GetComponent<Window_Graph>().Next(TestPopulation.OnlyF);
 
             for (int i = 0; i < TestPopulation.GenomesList.Count; i++)
             {                             
-               WriteString(TestPopulation.GenomesList[i]+" "+(int)TestPopulation.OnlyF[i]);              
+              WriteString(TestPopulation.GenomesList[i]+" "+TestPopulation.OnlyF[i]);              
             }
             //the list with the best individual of each generation
-            theamazing.Add(TestPopulation.OnlyF[0]);
+            fitnessessum.Add(TestPopulation.OnlyF.Sum());
         }
         //Draw the Graph for the GA
-        for (int i = 0; i < theamazing.Count; i++)
+        for (int i = 0; i < fitnessessum.Count; i++)
         {
             //to fit in the graph
-            theamazing[i] /= 10;
+            fitnessessum[i] /= 100;
         }
         //to draw the graph
-        forGraph.GetComponent<Window_Graph>().Next(theamazing);
+        forGraph.GetComponent<Window_Graph>().Next(fitnessessum);
     }
 
+    //Calls the Combinatorics scripts to find all the permutations for the given house program
     public void RunCombinatorics()
     {
 
@@ -245,27 +244,25 @@ public class HouseGenerator : MonoBehaviour
         Debug.Log(test.Fitnesses.Count+"I AM THE COUNT");
         for (int i = 0; i <  test.Fitnesses.Count; i++)
         {
-            theamazing.Add(test.Fitnesses[i]);
+            fitnessessum.Add(test.Fitnesses[i]);
         }
 
         //Draw the Graph for the Comb
-        for (int i = 0; i < theamazing.Count; i++)
+        for (int i = 0; i < fitnessessum.Count; i++)
          {
         //to fit in the graph
-          theamazing[i] /= 2;
+          fitnessessum[i] /= 2;
          }
-        theamazing.Reverse();
+        fitnessessum.Reverse();
         //to draw the graph
-        forGraph.GetComponent<Window_Graph>().Next(theamazing);
+        forGraph.GetComponent<Window_Graph>().Next(fitnessessum);
 
 
     }
 
-     
-
+    //Updates the fitness bar value
     public void Fillthebar()
-    {
-       
+    {     
         if (HouseProg.Length > 6)
         {
             Debug.Log(TestPopulation.OnlyF[0]);
@@ -278,7 +275,7 @@ public class HouseGenerator : MonoBehaviour
         }
     }
    
-    //STEP 4
+    //Creates 3D  representations of the labels,above the rooms by instantiating prefabs
     public void DrawLabels()
     {
          List<char> myfinallabels = new List<char>();
@@ -341,6 +338,7 @@ public class HouseGenerator : MonoBehaviour
         HouseProg = st;
     }
 
+    //Meshes the represent the house(floors of rooms for the final 3d representation)
     void GetHouseAsMesh(int length)
     {
         //Clear the lists from previous given Rule, to visualize the next
@@ -368,7 +366,7 @@ public class HouseGenerator : MonoBehaviour
         return Regex.IsMatch(str, @"^[kblwnosh]+$");
     }
 
-    //write the GA files to an exterior text file
+    //write the GA results to an exterior text file for documentation
     [MenuItem("Tools/Write file")]
     static void WriteString(string value)
     {

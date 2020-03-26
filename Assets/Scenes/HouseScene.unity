@@ -3352,7 +3352,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 934078666}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 263e6f0d9e0d47646a0274f0842ca73a, type: 3}
@@ -7596,7 +7596,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 934078667}
-        m_MethodName: AssignNumBlue
+        m_MethodName: AssignNumOther
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -10,13 +10,16 @@ public class RandomRuleGen
 
     public RandomRuleGen ( int length)
     {
+        //rules to diesct at longest side
         AllRulesL = "ABCDEF";
+        //rules to disect at shortest side
         AllRulesS = "GHIJKL";
+        //the final rule generated
         HouseRule = new char[length];
     }
 
     //the Rule is created alternatively from rules tha disect the longest and 
-    //then the shortest side to create more accurate results
+    //then the shortest side to potentialy create more accurate results
     //it also always start with disecting the longest side for the same reason
 
     public string MakeRule()

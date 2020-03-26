@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-/// <summary>
-/// Summary description for Genome.
-/// </summary>
+// based on :https://www.c-sharpcorner.com/article/implementing-a-genetic-algorithms-in-C-Sharp-and-net/
 public abstract class Genome : IComparable
 	{
     public long Lengthother;
@@ -12,6 +10,7 @@ public abstract class Genome : IComparable
     public double CurrentFitness = 0.0;
     abstract public void Initialize();
     abstract public void Mutate( );
+    abstract public void MutateOther();
     abstract public Genome Crossover(Genome g);
     abstract public Genome OrderedCrossover(Genome g);
     abstract public char GenerateGeneValue( );

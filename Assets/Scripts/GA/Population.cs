@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// based on :https://www.c-sharpcorner.com/article/implementing-a-genetic-algorithms-in-C-Sharp-and-net/
 public class Population
 {
     // const int kCrossover =  ;

@@ -5,7 +5,9 @@ using UnityEngine.UI;
 using System.Linq;
 
 
-
+//the House class includes all the Rules of the shape grammar
+//and the basic mesh representation of the house generated 
+//with a specific sequence of Rules(ex. ABC house)
 public class House 
 { 
        readonly string Rule;
@@ -73,11 +75,11 @@ public class House
                             case 'A':
                                 next.AddRange(RuleA(currentRoom)); break;
 
-                            //Dissect in longest side(1/3 - 2/3) next rule applies to both Room.
+                            //Dissect in longest side(1/3 - 2/3) next rule applies to both Rooms.
                             case 'B':
                                 next.AddRange(RuleB(currentRoom)); break;
 
-                            //Dissect in longest side(2/3- 1/3)  next rule applies to both Room.
+                            //Dissect in longest side(2/3- 1/3)  next rule applies to both Rooms.
                             case 'C':
                                 next.AddRange(RuleC(currentRoom)); break;
 
@@ -98,11 +100,11 @@ public class House
                             case 'G':
                                 next.AddRange(RuleG(currentRoom)); break;
 
-                            //Dissect in shortest side(1/3 - 2/3) next rule applies to both Room.
+                            //Dissect in shortest side(1/3 - 2/3) next rule applies to both Rooms.
                             case 'H':
                                next.AddRange(RuleH(currentRoom)); break;
 
-                            //Dissect in shortest side(2/3 - 1/3) next rule applies to both Room.
+                            //Dissect in shortest side(2/3 - 1/3) next rule applies to both Rooms.
                             case 'I':
                                 next.AddRange(RuleI(currentRoom)); break;
 

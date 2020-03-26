@@ -9,6 +9,7 @@ using UnityEngine;
 //
 // You can compile these images into a video using ffmpeg:
 // ffmpeg -i screen_3840x2160_%d.ppm -y test.avi
+//taken from https://answers.unity.com/questions/22954/how-to-save-a-picture-take-screenshot-from-a-camer.html
  public class Screenshot : MonoBehaviour
  {
     // 4k = 3840 x 2160   1080p = 1920 x 1080

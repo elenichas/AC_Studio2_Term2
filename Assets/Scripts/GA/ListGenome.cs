@@ -6,9 +6,7 @@ using UnityEngine;
 
 
 
-/// <summary>
-/// Summary description for ListGenome.
-/// </summary>
+// based on :https://www.c-sharpcorner.com/article/implementing-a-genetic-algorithms-in-C-Sharp-and-net/
 public class ListGenome : Genome
 {
     public static System.Random TheSeed = new System.Random((int)DateTime.Now.Ticks);
@@ -26,16 +24,22 @@ public class ListGenome : Genome
     //the dictionarywith pairs of individuals and their fitnesses
     public  List <string>  GenomeFitnessPairs;
 
+    //public override int CompareTo(object a)
+  //  {
+    //    ListGenome Gene1 = this;
+   //     ListGenome Gene2 = (ListGenome)a;
+   //     if (Gene1.CurrentFitness > Gene2.CurrentFitness)
+   //         return 1;
+   //     else if (Gene1.CurrentFitness < Gene2.CurrentFitness)
+   //         return -1;
+   //     else
+   //         return 0;
+  //  }
     public override int CompareTo(object a)
     {
         ListGenome Gene1 = this;
         ListGenome Gene2 = (ListGenome)a;
-        if (Gene1.CurrentFitness > Gene2.CurrentFitness)
-            return 1;
-        else if (Gene1.CurrentFitness < Gene2.CurrentFitness)
-            return -1;
-        else
-            return 0;
+        return Math.Sign(Gene2.CurrentFitness - Gene1.CurrentFitness);
     }
 
 
@@ -114,6 +118,28 @@ public class ListGenome : Genome
         TheArray[GeneToMutate] = g2;
         TheArray[geneToFlipWith] = g1;
     }
+    public override void MutateOther()
+    {
+        var GeneToMutate = UnityEngine.Random.Range(0, TheArray.Count);
+       // var geneToFlipWith = 0;
+        if (GeneToMutate == TheArray.Count)
+        {
+           var geneToFlipWith = GeneToMutate - 1;
+            var g2 = TheArray[geneToFlipWith];
+            var g1 = TheArray[GeneToMutate];
+        }
+        else
+        {
+           var geneToFlipWith = GeneToMutate + 1;
+            var g2 = TheArray[geneToFlipWith];
+            var g1 = TheArray[GeneToMutate];
+        }
+           
+
+       
+       
+         
+    }
 
 
     private double MeshArea(Mesh mesh)
@@ -127,17 +153,17 @@ public class ListGenome : Genome
         double f = 0;
         if (x < z)
         {
-            f += Math.Abs(minsize - x);
-            f += Math.Abs(maxsize - z);
-            f += Math.Abs(prop - x / z);
+            f += Math.Pow(minsize - x,2);
+            f += Math.Pow(maxsize - z,2);
+            f += Math.Pow(prop - x / z,2);
         }
         else
         {
-            f += Math.Abs(minsize - z);
-            f += Math.Abs(maxsize - x);
-            f += Math.Abs(prop - z / x);
+            f += Math.Pow(minsize - z,2);
+            f += Math.Pow(maxsize - x,2);
+            f += Math.Pow(prop - z / x,2);
         }
-          f += Math.Pow(area - area_this, 2);
+          f += Math.Abs(area - area_this);
        
         return f;
     }
@@ -154,8 +180,31 @@ public class ListGenome : Genome
         double sarea_this = 0;
         double harea_this = 0;
 
+        //proximity
+        for (int i = 0; i < TheArray.Count - 1; i++)
+        {
+            if ((TheArray[i] == 'k') & (TheArray[i + 1] == 'l'))
+            {
+                total_fitness -= 1000;
+               // Debug.Log("yes");
+            }
+            
+        }
+        for (int i = 0; i < TheArray.Count - 1; i++)
+        {
+            if ((TheArray[i] == 'l') & (TheArray[i + 1] == 'k'))
+            {
+                total_fitness -= 1000;
+               // Debug.Log("yes2");
+            }
+
+        }
+
+
+
         for (int i = 0; i < TheArray.Count; i++)
         {
+                                      
             switch (TheArray[i])
             {
                 //kitchen
@@ -182,11 +231,11 @@ public class ListGenome : Genome
                     total_fitness += DoTheMaths(lx, lz,lminsize, lmaxsize, larea, lprop, larea_this);
                     
                     //penalty for too big
-                    if (larea_this > larea)
-                        total_fitness += 500;
+                   if (larea_this > larea)
+                       total_fitness += 1000;
                     //penalty for too small
-                    if (larea_this < larea)
-                        total_fitness += 1500;
+                   else if (larea_this < larea)
+                        total_fitness += 1000;
                     break;
 
                 //bedroom
@@ -215,7 +264,7 @@ public class ListGenome : Genome
                     if (warea_this >  warea)
                         total_fitness += 1000;
                     //penalty for too small
-                    if (warea_this < warea)
+                   else if (warea_this < warea)
                         total_fitness += 1000;
                     break;                  
 
@@ -235,7 +284,7 @@ public class ListGenome : Genome
                 case 'n':
                     double nminsize =2.9;
                     double nmaxsize = 3.0;
-                    double narea = 4.0;
+                    double narea = 5.0;
                     double nprop = 0.86;
                     double nx = FinalMeshes[i].bounds.size.x;
                     double nz = FinalMeshes[i].bounds.size.z;
@@ -253,30 +302,40 @@ public class ListGenome : Genome
                     double sz = FinalMeshes[i].bounds.size.z;
                     sarea_this = MeshArea(FinalMeshes[i]);
                     total_fitness += DoTheMaths(sx, sz, sminsize, smaxsize, sarea, sprop, sarea_this);
+                    if (sarea_this > sarea)
+                        total_fitness += 1000;
                     break;
 
                 //help space,laundy etc
                 case 'h':
                     double hminsize = 1.5;
                     double hmaxsize = 2.0;
-                    double harea = 3.0;
+                    double harea = 2.0;
                     double hprop = 0.9;
                     double hx = FinalMeshes[i].bounds.size.x;
                     double hz = FinalMeshes[i].bounds.size.z;
                     harea_this = MeshArea(FinalMeshes[i]);
                    total_fitness += DoTheMaths(hx, hz, hminsize, hmaxsize, harea, hprop, harea_this);
+                    if (harea_this > harea)
+                        total_fitness += 1000;
                     break;
             }
             //extra penalties for room area comparison          
             if (warea_this > larea_this)
+               total_fitness += 1000;
+           else if (warea_this > barea_this)
                 total_fitness += 1000;
-            if (warea_this > barea_this)
+            else if(harea_this>larea_this)
+               
                 total_fitness += 1000;
             if (narea_this > barea_this)
-                total_fitness += 1000;
+               total_fitness += 1000;
         }
         //remaping (value - from1) / (to1 - from1) * (to2 - from2) + from2;
-         return (total_fitness - 0) / (30000 - 0) * (100- 0) + 0;       
+        // return (total_fitness - 0) / (30000 - 0) * (100- 0) + 0; 
+        
+        return total_fitness / 100;
+       
     }
     public override double CalculateFitness()
     {
